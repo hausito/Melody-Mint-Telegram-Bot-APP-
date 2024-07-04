@@ -46,8 +46,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (data.success) {
                 points = data.points;
                 tickets = data.tickets;
-                userPoints.textContent = ` ${points}`;
-                userTickets.textContent = ` ${tickets}`;
+                userPoints.textContent = points;
+                userTickets.textContent = tickets;
             } else {
                 console.error('Failed to fetch user data:', data.error);
             }
