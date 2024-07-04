@@ -11,51 +11,43 @@
 </head>
 <body>
     <div id="gameContainer">
-        <canvas id="gameCanvas" width="360" height="640"></canvas>
-        <div id="header">
-            <div class="absolute top-2 left-2 flex items-center space-x-2">
-                <img src="icons/ticket-128.png" alt="Tickets" class="w-8 h-8"> <!-- Small size -->
-                <span id="ticketsInfo" class="text-custom text-xl font-bold">5</span> <!-- Number 5 with custom color -->
+        <div id="topHalf">
+            <img src="background.jpeg" alt="Piano Image" class="background-image">
+            <div id="header">
+                <div class="absolute top-2 left-2 flex items-center space-x-2">
+                    <img src="icons/ticket-128.png" alt="Tickets" class="w-8 h-8"> <!-- Small size -->
+                    <span id="ticketsInfo" class="text-custom text-xl font-bold">5</span> <!-- Number 5 with custom color -->
+                </div>
+                <div id="userInfo">Username</div>
+                <div id="inviteButton" onclick="showReferralLink()" class="absolute top-2 right-2 p-2 cursor-pointer">
+                    <img src="icons/add-user-2-128.png" alt="Invite Friends" class="w-8 h-8"> 
+                </div>
             </div>
-            <div id="userInfo">Username</div>
-            <div id="inviteButton" onclick="showReferralLink()" class="absolute top-2 right-2 p-2 cursor-pointer">
-                <img src="icons/add-user-2-128.png" alt="Invite Friends" class="w-8 h-8"> 
-            </div>
-        </div>
-        <div id="claimPopup" class="popup">
-            <div class="popup-content">
-                <span class="close" onclick="closePopup()">&times;</span>
-                <h2>Claim Your Tickets</h2>
-                <p>Click the button below to claim your daily tickets.</p>
-                <button onclick="claimTickets()">Claim Tickets</button>
+            <div class="coin-container">
+                <span id="points" class="text-xl">6000</span>
             </div>
         </div>
 
         <div id="startScreen">
-            <img src="images/background.jpeg" alt="Background Image" class="background-image">     
             <div id="newLayout" class="bg-white rounded-lg p-4 shadow-lg">
-                <div class="coin-container">
-                    <span id="points" class="text-xl"></span>
+                <div class="buttons-container px-6 mb-8">
+                    <!-- Button Earn Coins -->
+                    <button id="playButton" class="button-custom bg-earn-coins text-white text-lg py-3 rounded-lg shadow-inner-custom-button hover:bg-purple-700 transition">
+                        Earn Coins
+                    </button>
+                    <!-- Button Tasks -->
+                    <button id="tasksButton" class="button-custom bg-tasks text-white text-lg py-3 rounded-lg shadow-inner-custom-button hover:bg-blue-700 transition">
+                        Tasks
+                    </button>
+                    <!-- Button Upgrade -->
+                    <button id="upgradeButton" class="button-custom bg-upgrade text-white text-lg py-3 rounded-lg shadow-inner-custom-button hover:bg-purple-700 transition">
+                        Upgrade
+                    </button>
                 </div>
-        <div class="buttons-container px-6 mb-8">
-        <!-- Buton Earn Coins -->
-        <button id="playButton" class="button-custom bg-earn-coins text-white text-lg py-3 rounded-lg shadow-inner-custom-button hover:bg-purple-700 transition">
-            Earn Coins
-        </button>
-
-        <!-- Buton Tasks -->
-        <button id="tasksButton" class="button-custom bg-tasks text-white text-lg py-3 rounded-lg shadow-inner-custom-button hover:bg-blue-700 transition">
-            Tasks
-        </button>
-
-        <!-- Buton Upgrade -->
-        <button id="upgradeButton" class="button-custom bg-upgrade text-white text-lg py-3 rounded-lg shadow-inner-custom-button hover:bg-purple-700 transition">
-            Upgrade
-        </button>
-    </div>
             </div>
         </div>
     </div>
+
     <div id="myModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
