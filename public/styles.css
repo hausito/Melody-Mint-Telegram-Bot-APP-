@@ -62,25 +62,7 @@ body {
     cursor: pointer;
 }
 
-/* Button styling */
-.invite-button {
-    font-family: 'Roboto', sans-serif;
-    padding: 15px 30px;
-    margin: 10px 0;
-    background: linear-gradient(45deg, #ff7e5f, #feb47b);
-    color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    border: none;
-    cursor: pointer;
-    transition: background 0.3s ease;
-    width: calc(100% - 40px);
-    max-width: 300px;
-}
 
-.invite-button:hover {
-    background: linear-gradient(45deg, #feb47b, #ff7e5f);
-}
 
 canvas {
     display: block;
@@ -91,19 +73,7 @@ canvas {
 #points {
     margin-right: 50px;
 }
-#header {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px; /* Adjusted padding to ensure visibility */
-    background-color: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border-radius: 0 0 10px 10px;
-}
+
 
 #userInfo {
     color: #000;
