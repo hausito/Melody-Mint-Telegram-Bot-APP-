@@ -5,42 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Melody Mint</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>    
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="main.js"></script>
 </head>
 <body>
     <div id="gameContainer">
         <canvas id="gameCanvas" width="360" height="640"></canvas>
         <div id="header">
-            <div id="userInfo" class="absolute top-2 left-1/2 transform -translate-x-1/2 text-white p-2 bg-black bg-opacity-50 rounded-md">Username</div>
-            <div id="pointsContainer">
-                <img src="points.png" alt="Points" class="icon">
-                <span id="points">Loading...</span>
+            <div class="absolute top-2 left-2 flex items-center space-x-2">
+                <img src="icons/ticket-128.png" alt="Tickets" class="w-8 h-8"> <!-- Small size -->
+                <span id="ticketsInfo" class="text-custom text-xl font-bold">5</span> <!-- Number 5 with custom color -->
             </div>
-            <div id="inviteButton" onclick="showReferralLink()" class="absolute top-2 right-2 p-2">
+            <div id="userInfo">Username</div>
+            <div id="inviteButton" onclick="showReferralLink()" class="absolute top-2 right-2 p-2 cursor-pointer">
                 <img src="icons/add-user-2-128.png" alt="Invite Friends" class="w-8 h-8"> 
             </div>
         </div>
         <div id="claimPopup" class="popup">
             <div class="popup-content">
-            <span class="close" onclick="closePopup()">&times;</span>
-            <h2>Claim Your Tickets</h2>
-            <p>Click the button below to claim your daily tickets.</p>
-            <button onclick="claimTickets()">Claim Tickets</button>
+                <span class="close" onclick="closePopup()">&times;</span>
+                <h2>Claim Your Tickets</h2>
+                <p>Click the button below to claim your daily tickets.</p>
+                <button onclick="claimTickets()">Claim Tickets</button>
             </div>
         </div>
 
         <div id="startScreen">
-            <div id="newLayout">
-                <div id="ticketsContainer">
-                    <img src="tickets.png" alt="Tickets" class="icon">
-                    <span id="ticketsInfo">Loading...</span>
+            <img src="images/background.jpeg" alt="Background Image" class="background-image">     
+            <div id="newLayout" class="bg-white rounded-lg p-4 shadow-lg">
+                <div class="coin-container">
+                    <span id="points" class="text-xl"></span>
                 </div>
-                <button id="playButton">Play</button>
-                <button id="tasksButton" class="comingSoon">Tasks</button>
-                <button id="upgradeButton" class="comingSoon">Upgrade</button>
+        <div class="buttons-container px-6 mb-8">
+        <!-- Buton Earn Coins -->
+        <button id="playButton" class="button-custom bg-earn-coins text-white text-lg py-3 rounded-lg shadow-inner-custom-button hover:bg-purple-700 transition">
+            Earn Coins
+        </button>
 
+        <!-- Buton Tasks -->
+        <button id="tasksButton" class="button-custom bg-tasks text-white text-lg py-3 rounded-lg shadow-inner-custom-button hover:bg-blue-700 transition">
+            Tasks
+        </button>
+
+        <!-- Buton Upgrade -->
+        <button id="upgradeButton" class="button-custom bg-upgrade text-white text-lg py-3 rounded-lg shadow-inner-custom-button hover:bg-purple-700 transition">
+            Upgrade
+        </button>
+    </div>
             </div>
         </div>
     </div>
@@ -55,6 +67,7 @@
     </div>
     
     <audio id="backgroundMusic" src="background-music.mp3" loop></audio>
+    <!-- Icons footer -->
     <div id="footer">
         <button class="footer-button" onclick="window.location.href='index.html'">
             <img src="home.png" alt="Home">
@@ -69,4 +82,4 @@
 
     <script src="game.js"></script>
 </body>
-</html>
+</html> 
