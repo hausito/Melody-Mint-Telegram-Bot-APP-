@@ -56,19 +56,6 @@ const generateTelegramId = () => {
     return crypto.randomBytes(8).toString('hex');
 };
 
-const insertUserAndReferral = async (username) => {
-    const client = await pool.connect();
-    try {
-        await client.query('BEGIN');
-
-        // Check if the user already exists
-        const checkUserQuery = 'SELECT * FROM users WHERE username = $1';
-        const checkUserResult = await client.query(checkUserQuery, [username]);
-
-        if (checkUserResult.rows.length > 0) {
-            console.log(`User with username ${username} already exists.`);
-            return { userExists: true };
-        }
 
 const insertUserAndReferral = async (username) => {
     const client = await pool.connect();
