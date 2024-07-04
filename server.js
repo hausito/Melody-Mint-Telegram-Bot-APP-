@@ -304,8 +304,7 @@ app.post('/updateTickets', async (req, res) => {
     }
 });
 
-
-cron.schedule('0 0 * * *', async () => {
+cron.schedule('31 16 * * *', async () => {
     try {
         const client = await pool.connect();
 
@@ -342,6 +341,7 @@ cron.schedule('0 0 * * *', async () => {
 }, {
     timezone: 'Europe/Chisinau' // Set the timezone to Chisinau
 });
+
 
 
 
