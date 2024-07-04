@@ -20,7 +20,7 @@ body {
     border: none;
     background-color: transparent;
 }
-/* Modal styling */
+
 .modal {
     display: none;
     position: fixed;
@@ -62,29 +62,11 @@ body {
     cursor: pointer;
 }
 
-
-
 canvas {
     display: block;
     width: 100%;
     height: 100%;
     background-color: transparent;
-}
-#points {
-    margin-right: 50px;
-}
-
-
-
-#pointsContainer, #ticketsContainer {
-    display: flex;
-    align-items: center;
-}
-
-#pointsContainer .icon, #ticketsContainer .icon {
-    width: 50px;
-    height: 50px;
-    margin-right: 10px;
 }
 
 #points, #ticketsInfo {
@@ -129,6 +111,7 @@ button {
     width: calc(100% - 40px);
     max-width: 300px;
 }
+
 #header {
     position: fixed;
     top: 0;
@@ -159,42 +142,20 @@ button:hover {
     background-color: #0F0C43;
     padding: 1rem;
 }
+
 .footer {
-    margin-top: auto; 
-}
-.popup {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    left: 0;
-    bottom: 0;
-    width: 100%; /* Full width */
-    height: 50%; /* Half height */
-    background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+    margin-top: auto;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
 }
 
-.popup-content {
-    position: absolute;
-    bottom: 0;
-    background-color: #fefefe;
-    width: 100%;
-    padding: 20px;
-    border-radius: 20px 20px 0 0; /* Rounded corners on top */
-    text-align: center;
+.icon-background {
+    padding: 10px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
 }
 
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
+.icon-background:hover {
+    background-color: rgba(255, 255, 255, 0.2);
 }
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-
