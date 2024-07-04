@@ -5,7 +5,7 @@ body {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    min-height: 100vh; /* Changed to min-height to ensure the body covers the entire viewport height */
     background-image: url('background.jpg'); /* Replace 'background.jpg' with your image path */
     background-size: cover;
     background-position: center;
@@ -20,7 +20,7 @@ body {
     border: none;
     background-color: transparent;
 }
-/* Modal styling */
+
 .modal {
     display: none;
     position: fixed;
@@ -62,29 +62,11 @@ body {
     cursor: pointer;
 }
 
-
-
 canvas {
     display: block;
     width: 100%;
     height: 100%;
     background-color: transparent;
-}
-#points {
-    margin-right: 50px;
-}
-
-
-
-#pointsContainer, #ticketsContainer {
-    display: flex;
-    align-items: center;
-}
-
-#pointsContainer .icon, #ticketsContainer .icon {
-    width: 50px;
-    height: 50px;
-    margin-right: 10px;
 }
 
 #points, #ticketsInfo {
@@ -129,6 +111,7 @@ button {
     width: calc(100% - 40px);
     max-width: 300px;
 }
+
 #header {
     position: fixed;
     top: 0;
@@ -155,69 +138,27 @@ button:hover {
     background: linear-gradient(45deg, #feb47b, #ff7e5f);
 }
 
-
-.popup {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    left: 0;
-    bottom: 0;
-    width: 100%; /* Full width */
-    height: 50%; /* Half height */
-    background-color: rgba(0,0,0,0.5); /* Black background with opacity */
-}
-
-.popup-content {
-    position: absolute;
-    bottom: 0;
-    background-color: #fefefe;
-    width: 100%;
-    padding: 20px;
-    border-radius: 20px 20px 0 0; /* Rounded corners on top */
-    text-align: center;
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-/* Add this to your existing styles.css */
-
-/* Add this to your existing styles.css */
-
-#footer {
+.footer-background {
     background-color: #0F0C43;
     padding: 1rem;
+}
+
+.footer {
+    margin-top: auto;
     display: flex;
-    justify-content: space-around; /* Center the buttons */
+    justify-content: space-around;
     align-items: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
 }
 
-.footer-button {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    transition: transform 0.2s ease, opacity 0.2s ease;
+.icon-background {
+    padding: 10px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
 }
 
-.footer-button img {
-    width: 32px; /* Adjust image size */
-    height: 32px;
-    transition: transform 0.2s ease;
+.icon-background:hover {
+    background-color: rgba(255, 255, 255, 0.2);
 }
-
-.footer-button:hover {
-    opacity: 0.8; /* Reduce opacity on hover */
-    transform: scale(1.1); /* Scale up slightly on hover */
-}
-
-
-
