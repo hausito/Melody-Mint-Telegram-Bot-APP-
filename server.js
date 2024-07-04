@@ -163,8 +163,6 @@ Web3 Integration: Transfer your music into the blockchain, giving sound a real m
         }
     });
 });
-
-
 app.get('/getUserData', async (req, res) => {
     try {
         const { username, referralLink } = req.query;
@@ -174,13 +172,14 @@ app.get('/getUserData', async (req, res) => {
         }
 
         const client = await pool.connect();
-        const result = await client.query('SELECT user_id, points, tickets, has_claimed_tickets  FROM users WHERE username = $1', [username]);
+        const result = await client.query('SELECT user_id, points, tickets, has_claimed_tickets FROM users WHERE username = $1', [username]);
 
         if (result.rows.length > 0) {
-            res.status(200).json({ success: true, points: result.rows[0].points, tickets: result.rows[0].tickets, has_claimed_tickets: user.has_claimed_tickets });
+            const user = result.rows[0];
+            res.status(200).json({ success: true, points: user.points, tickets: user.tickets, has_claimed_tickets: user.has_claimed_tickets });
         } else {
             const newUser = await insertUserAndReferral(username, referralLink);
-            res.status(200).json({ success: true, points: newUser.points, tickets: newUser.tickets });
+            res.status(200).json({ success: true, points: newUser.points, tickets: newUser.tickets, has_claimed_tickets: newUser.has_claimed_tickets });
         }
 
         client.release();
@@ -189,6 +188,7 @@ app.get('/getUserData', async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 });
+
 
 app.get('/getReferralLink', async (req, res) => {
     try {
