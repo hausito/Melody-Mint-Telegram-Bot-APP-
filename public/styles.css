@@ -5,7 +5,7 @@ body {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    min-height: 100vh; /* Changed to min-height to ensure the body covers the entire viewport height */
+    height: 100vh;
     background-image: url('background.jpg'); /* Replace 'background.jpg' with your image path */
     background-size: cover;
     background-position: center;
@@ -20,7 +20,7 @@ body {
     border: none;
     background-color: transparent;
 }
-
+/* Modal styling */
 .modal {
     display: none;
     position: fixed;
@@ -62,11 +62,29 @@ body {
     cursor: pointer;
 }
 
+
+
 canvas {
     display: block;
     width: 100%;
     height: 100%;
     background-color: transparent;
+}
+#points {
+    margin-right: 50px;
+}
+
+
+
+#pointsContainer, #ticketsContainer {
+    display: flex;
+    align-items: center;
+}
+
+#pointsContainer .icon, #ticketsContainer .icon {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
 }
 
 #points, #ticketsInfo {
@@ -112,6 +130,56 @@ button {
     max-width: 300px;
 }
 
+button:hover {
+    background: linear-gradient(45deg, #feb47b, #ff7e5f);
+}
+
+#footer {
+    display: flex;
+    justify-content: space-around;
+    background-color: #f0f0f0;
+    padding: 10px 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.footer-button {
+    flex-grow: 1;
+    text-align: center;
+    padding: 5px 0;
+    margin: 0 5px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+.popup {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    bottom: 0;
+    width: 100%; /* Full width */
+    height: 50%; /* Half height */
+    background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+}
+
+.popup-content {
+    position: absolute;
+    bottom: 0;
+    background-color: #fefefe;
+    width: 100%;
+    padding: 20px;
+    border-radius: 20px 20px 0 0; /* Rounded corners on top */
+    text-align: center;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
 #header {
     position: fixed;
     top: 0;
@@ -134,31 +202,14 @@ button {
     cursor: pointer;
 }
 
-button:hover {
-    background: linear-gradient(45deg, #feb47b, #ff7e5f);
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
 }
 
-.footer-background {
-    background-color: #0F0C43;
-    padding: 1rem;
-}
-
-.footer {
-    margin-top: auto;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-}
-
-.icon-background {
-    padding: 10px;
-    border-radius: 50%;
-    transition: background-color 0.3s ease;
-}
-
-.icon-background:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+.footer-button img {
+    max-width: 30px;
+    height: auto;
 }
