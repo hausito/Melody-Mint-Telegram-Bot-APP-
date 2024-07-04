@@ -12,19 +12,6 @@ body {
     background-repeat: no-repeat;
     color: #333;
 }
-#header {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px; /* Adjusted padding to ensure visibility */
-    background-color: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border-radius: 0 0 10px 10px;
-}
 
 #gameContainer {
     flex-grow: 1;
@@ -141,6 +128,27 @@ button {
     transition: background 0.3s ease;
     width: calc(100% - 40px);
     max-width: 300px;
+}
+#header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000; /* Ensure it's above other elements */
+}
+
+#userInfo {
+    margin: 0 auto; /* Center the username */
+}
+
+#inviteButton {
+    cursor: pointer;
 }
 
 button:hover {
