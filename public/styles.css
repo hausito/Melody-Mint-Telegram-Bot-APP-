@@ -148,7 +148,9 @@ button:hover {
 
 .footer-button {
     flex-grow: 1;
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 10px;
     margin: 0 10px;
     background-color: rgba(255, 255, 255, 0.8);
