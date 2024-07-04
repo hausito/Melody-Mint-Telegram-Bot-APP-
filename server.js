@@ -174,10 +174,10 @@ app.get('/getUserData', async (req, res) => {
         }
 
         const client = await pool.connect();
-        const result = await client.query('SELECT user_id, points, tickets FROM users WHERE username = $1', [username]);
+        const result = await client.query('SELECT user_id, points, tickets, has_claimed_tickets  FROM users WHERE username = $1', [username]);
 
         if (result.rows.length > 0) {
-            res.status(200).json({ success: true, points: result.rows[0].points, tickets: result.rows[0].tickets });
+            res.status(200).json({ success: true, points: result.rows[0].points, tickets: result.rows[0].tickets, has_claimed_tickets: user.has_claimed_tickets });
         } else {
             const newUser = await insertUserAndReferral(username, referralLink);
             res.status(200).json({ success: true, points: newUser.points, tickets: newUser.tickets });
