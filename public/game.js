@@ -46,8 +46,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (data.success) {
                 points = data.points;
                 tickets = data.tickets;
-                userPoints.textContent = `${points}`; // Updated
-                userTickets.textContent = `${tickets}`; // Updated
+                userPoints.textContent = ` ${points}`;
+                userTickets.textContent = ` ${tickets}`;
             } else {
                 console.error('Failed to fetch user data:', data.error);
             }
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     playButton.addEventListener('click', async () => {
         if (tickets > 0) {
             tickets--;
-            userTickets.textContent = `${tickets}`; // Updated
+            userTickets.textContent = ` ${tickets}`;
 
             // Update tickets on the server
             try {
@@ -188,29 +188,30 @@ document.addEventListener('DOMContentLoaded', async () => {
         return /Mobi|Android/i.test(navigator.userAgent);
     }
 
-    function addNewTile() {
-        const attempts = 100;
-        const lastColumn = tiles.length > 0 ? Math.floor(tiles[tiles.length - 1].x / (TILE_WIDTH + SEPARATOR)) : -1;
+function addNewTile() {
+    const attempts = 100;
+    const lastColumn = tiles.length > 0 ? Math.floor(tiles[tiles.length - 1].x / (TILE_WIDTH + SEPARATOR)) : -1;
 
-        for (let i = 0; i < attempts; i++) {
-            let newColumn;
-            do {
-                newColumn = Math.floor(Math.random() * COLUMNS);
-            } while (newColumn === lastColumn);
+    for (let i = 0; i < attempts; i++) {
+        let newColumn;
+        do {
+            newColumn = Math.floor(Math.random() * COLUMNS);
+        } while (newColumn === lastColumn);
 
-            const newTileX = newColumn * (TILE_WIDTH + SEPARATOR);
-            const newTileY = Math.min(...tiles.map(tile => tile.y)) - TILE_HEIGHT - VERTICAL_GAP;
+        const newTileX = newColumn * (TILE_WIDTH + SEPARATOR);
+        const newTileY = Math.min(...tiles.map(tile => tile.y)) - TILE_HEIGHT - VERTICAL_GAP;
 
-            if (!tiles.some(tile => {
-                const rect = { x: newTileX, y: newTileY, width: TILE_WIDTH, height: TILE_HEIGHT };
-                return tile.y < rect.y + rect.height && tile.y + tile.height > rect.y &&
-                    tile.x < rect.x + rect.width && tile.x + tile.width > rect.x;
-            })) {
-                tiles.push(new Tile(newTileX, newTileY));
-                break;
-            }
+        if (!tiles.some(tile => {
+            const rect = { x: newTileX, y: newTileY, width: TILE_WIDTH, height: TILE_HEIGHT };
+            return tile.y < rect.y + rect.height && tile.y + tile.height > rect.y &&
+                tile.x < rect.x + rect.width && tile.x + tile.width > rect.x;
+        })) {
+            tiles.push(new Tile(newTileX, newTileY));
+            break;
         }
     }
+}
+
 
     function handleClick(event) {
         if (!gameRunning) return;
@@ -279,43 +280,85 @@ document.addEventListener('DOMContentLoaded', async () => {
             addNewTile();
         }
 
-        TILE_SPEED += SPEED_INCREMENT;
+        // Draw vertical lines
+        ctx.strokeStyle = BORDER_COLOR;
+        ctx.lineWidth = 2;
+        for (let i = 1; i < COLUMNS; i++) {
+            const x = i * TILE_WIDTH;
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, HEIGHT);
+            ctx.stroke();
+        }
+
+        ctx.fillStyle = SHADOW_COLOR;
+        ctx.font = 'bold 24px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(`SCORE: ${score}`, WIDTH / 2 + 2, 32);
+
+        ctx.fillStyle = SKY_BLUE;
+        ctx.fillText(`SCORE: ${score}`, WIDTH / 2, 30);
+
+        TILE_SPEED += SPEED_INCREMENT * deltaTime * 60; 
 
         requestAnimationFrame(gameLoop);
-    }
-
-    function gameOver() {
-        backgroundMusic.pause();
-        backgroundMusic.currentTime = 0;
-        startScreen.style.display = 'block';
-        footer.style.display = 'flex';
-        header.style.display = 'block'; 
-
-        points += score;
-        userPoints.textContent = `${points}`; // Updated
-
-        // Update points on the server
-        try {
-            const response = await fetch('/updatePoints', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username: userInfo.textContent, points }),
-            });
-
-            const result = await response.json();
-            if (!result.success) {
-                console.error('Error updating points:', result.error);
-            }
-        } catch (error) {
-            console.error('Error updating points:', error);
-        }
     }
 
     function startMusic() {
         backgroundMusic.play().catch(function(error) {
             console.error('Error playing audio:', error);
         });
+    }
+
+    tg.onEvent('themeChanged', function() {
+        const themeParams = tg.themeParams;
+        if (themeParams && themeParams.bg_color && !themeParams.bg_color.includes('unset') && !themeParams.bg_color.includes('none')) {
+            document.body.style.backgroundColor = themeParams.bg_color;
+        }
+    });
+
+    tg.ready().then(function() {
+        if (tg.themeParams) {
+            const themeParams = tg.themeParams;
+            if (themeParams.bg_color && !themeParams.bg_color.includes('unset') && !themeParams.bg_color.includes('none')) {
+                document.body.style.backgroundColor = themeParams.bg_color;
+            }
+        }
+        if (tg.initDataUnsafe?.user) {
+            userInfo.textContent = tg.initDataUnsafe.user.username || `${tg.initDataUnsafe.user.first_name} ${tg.initDataUnsafe.user.last_name}`;
+        } else {
+            userInfo.textContent = 'Username';
+        }
+        if (tg.initDataUnsafe?.is_explicitly_enabled) {
+            startMusic();
+        }
+    });
+
+    async function gameOver() {
+        await saveUser(userInfo.textContent, score);
+        const redirectURL = `transition.html?score=${score}`;
+        window.location.replace(redirectURL);
+    }
+
+    async function saveUser(username, scoreToAdd) {
+        try {
+            const response = await fetch('/saveUser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, points: scoreToAdd }),
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                points = result.data.points; 
+                userPoints.textContent = `Points: ${points}`; 
+            } else {
+                console.error('Error saving user:', result.error);
+            }
+        } catch (error) {
+            console.error('Error saving user:', error);
+        }
     }
 });
