@@ -12,7 +12,10 @@ body {
     background-repeat: no-repeat;
     color: #333;
 }
-
+.background-image {
+    width: 100%;
+    height: auto;
+}
 #gameContainer {
     flex-grow: 1;
     width: 100vw;
