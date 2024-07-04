@@ -54,17 +54,18 @@
     </div>
     
     <audio id="backgroundMusic" src="background-music.mp3" loop></audio>
-    <div id="footer">
-        <button class="footer-button" onclick="window.location.href='index.html'">
-            <img src="home.png" alt="Home">
-        </button>
-        <button class="footer-button" onclick="window.location.href='tasks.html'">
-            <img src="tasks.png" alt="Tasks">
-        </button>
-        <button class="footer-button" onclick="window.location.href='airdrop.html'">
-            <img src="airdrop.png" alt="Airdrop">
-        </button>
-    </div>
+    <!-- icons footer -->
+    <footer id="footer" class="w-full footer-background flex justify-between items-center footer">
+        <div class="icon-background bg-home" onclick="window.location.href='index.html'">
+            <img src="icons/home-5-128.png" alt="" class="w-8 h-8"> <!-- Icoane mai mici -->
+        </div>
+        <div class="icon-background bg-trophy" onclick="window.location.href='tasks.html'">
+            <img src="icons/trophy-2-128.png" alt="" class="w-8 h-8"> <!-- Icoane mai mici -->
+        </div>
+        <div class="icon-background bg-package" onclick="window.location.href='airdrop.html'">
+            <img src="icons/package-2-128.png" alt="" class="w-8 h-8"> <!-- Icoane mai mici -->
+        </div>
+    </footer>
 
     <script src="game.js"></script>
 </body>
