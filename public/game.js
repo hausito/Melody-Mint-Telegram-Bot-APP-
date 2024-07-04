@@ -46,8 +46,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (data.success) {
                 points = data.points;
                 tickets = data.tickets;
-                userPoints.textContent = points;
-                userTickets.textContent = tickets;
+                userPoints.textContent = `${points}`; // Updated
+                userTickets.textContent = `${tickets}`; // Updated
             } else {
                 console.error('Failed to fetch user data:', data.error);
             }
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     playButton.addEventListener('click', async () => {
         if (tickets > 0) {
             tickets--;
-            userTickets.textContent = tickets;
+            userTickets.textContent = `${tickets}`; // Updated
 
             // Update tickets on the server
             try {
@@ -184,79 +184,119 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    function startMusic() {
-        backgroundMusic.play().catch(function(error) {
-            console.error('Error playing audio:', error);
-        });
+    function isMobileDevice() {
+        return /Mobi|Android/i.test(navigator.userAgent);
     }
+
+    function addNewTile() {
+        const attempts = 100;
+        const lastColumn = tiles.length > 0 ? Math.floor(tiles[tiles.length - 1].x / (TILE_WIDTH + SEPARATOR)) : -1;
+
+        for (let i = 0; i < attempts; i++) {
+            let newColumn;
+            do {
+                newColumn = Math.floor(Math.random() * COLUMNS);
+            } while (newColumn === lastColumn);
+
+            const newTileX = newColumn * (TILE_WIDTH + SEPARATOR);
+            const newTileY = Math.min(...tiles.map(tile => tile.y)) - TILE_HEIGHT - VERTICAL_GAP;
+
+            if (!tiles.some(tile => {
+                const rect = { x: newTileX, y: newTileY, width: TILE_WIDTH, height: TILE_HEIGHT };
+                return tile.y < rect.y + rect.height && tile.y + tile.height > rect.y &&
+                    tile.x < rect.x + rect.width && tile.x + tile.width > rect.x;
+            })) {
+                tiles.push(new Tile(newTileX, newTileY));
+                break;
+            }
+        }
+    }
+
+    function handleClick(event) {
+        if (!gameRunning) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const mouseX = (event.clientX - rect.left) * scaleX;
+        const mouseY = (event.clientY - rect.top) * scaleY;
+
+        let clickedOnTile = false;
+        tiles.forEach(tile => {
+            if (tile.isClicked(mouseX, mouseY) && !tile.clicked) {
+                tile.startDisappearing();
+                clickedOnTile = true;
+                score++;
+                addNewTile();
+            }
+        });
+
+        if (!clickedOnTile) {
+            gameRunning = false;
+            gameOver();
+        }
+    }
+
+    canvas.addEventListener('click', handleClick);
+    canvas.addEventListener('touchstart', (event) => {
+        event.preventDefault();
+        const touch = event.touches[0];
+        handleClick({
+            clientX: touch.clientX,
+            clientY: touch.clientY,
+        });
+    });
+
+    let lastTimestamp = 0;
 
     function gameLoop(timestamp) {
         if (!gameRunning) return;
 
-        const deltaTime = timestamp - lastTimestamp;
+        const deltaTime = (timestamp - lastTimestamp) / 1000; 
         lastTimestamp = timestamp;
 
         ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
+        let outOfBounds = false;
         tiles.forEach(tile => {
-            tile.move(TILE_SPEED);
+            tile.move(TILE_SPEED * deltaTime * 60); 
+            tile.updateOpacity();
+            if (tile.isOutOfBounds()) {
+                outOfBounds = true;
+            }
             tile.draw();
         });
 
-        tiles = tiles.filter(tile => tile.y < HEIGHT);
-
-        if (tiles.length < 4) {
-            const x = Math.floor(Math.random() * COLUMNS) * (TILE_WIDTH + SEPARATOR);
-            const y = -TILE_HEIGHT;
-            tiles.push(new Tile(x, y));
+        if (outOfBounds) {
+            gameRunning = false;
+            gameOver();
+            return;
         }
 
-        tiles.forEach(tile => {
-            if (tile.isOutOfBounds()) {
-                gameRunning = false;
-                alert('Game Over! Your score: ' + score);
-                stopMusic();
-                endGame();
-            }
-        });
+        tiles = tiles.filter(tile => tile.y < HEIGHT && tile.opacity > 0);
 
-        if (tiles.length > 0 && tiles[0].y > 0 && tiles.length < 4) {
-            const x = Math.floor(Math.random() * COLUMNS) * (TILE_WIDTH + SEPARATOR);
-            const y = -TILE_HEIGHT;
-            tiles.push(new Tile(x, y));
+        while (tiles.length < 4) {
+            addNewTile();
         }
-
-        tiles.forEach(tile => {
-            tile.updateOpacity();
-        });
 
         TILE_SPEED += SPEED_INCREMENT;
 
         requestAnimationFrame(gameLoop);
     }
 
-    canvas.addEventListener('mousedown', (event) => {
-        const mouseX = event.offsetX;
-        const mouseY = event.offsetY;
-
-        tiles.forEach(tile => {
-            if (tile.isClicked(mouseX, mouseY) && !tile.clicked) {
-                tile.startDisappearing();
-                score++;
-            }
-        });
-    });
-
-    function endGame() {
-        startScreen.style.display = 'flex';
+    function gameOver() {
+        backgroundMusic.pause();
+        backgroundMusic.currentTime = 0;
+        startScreen.style.display = 'block';
         footer.style.display = 'flex';
-        header.style.display = 'flex'; 
+        header.style.display = 'block'; 
+
+        points += score;
+        userPoints.textContent = `${points}`; // Updated
 
         // Update points on the server
-        points += score;
-        userPoints.textContent = points;
         try {
-            const response = fetch('/updatePoints', {
+            const response = await fetch('/updatePoints', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -264,7 +304,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 body: JSON.stringify({ username: userInfo.textContent, points }),
             });
 
-            const result = response.json();
+            const result = await response.json();
             if (!result.success) {
                 console.error('Error updating points:', result.error);
             }
@@ -273,59 +313,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    function stopMusic() {
-        backgroundMusic.pause();
-        backgroundMusic.currentTime = 0;
-    }
-
-    window.showReferralLink = async () => {
-        const username = userInfo.textContent;
-        const response = await fetch(`/getReferralLink?username=${encodeURIComponent(username)}`);
-        const data = await response.json();
-
-        if (data.success) {
-            const referralLink = data.referralLink;
-            const modalContent = document.getElementById('modalContent');
-            modalContent.textContent = referralLink;
-            const modal = document.getElementById('myModal');
-            modal.style.display = 'block';
-        } else {
-            console.error('Failed to get referral link:', data.error);
-        }
-    };
-
-    window.copyToClipboard = () => {
-        const referralLink = document.getElementById('modalContent').textContent;
-        navigator.clipboard.writeText(referralLink).then(() => {
-            alert('Referral link copied to clipboard!');
-        }).catch(err => {
-            console.error('Could not copy text: ', err);
+    function startMusic() {
+        backgroundMusic.play().catch(function(error) {
+            console.error('Error playing audio:', error);
         });
-    };
-
-    window.closeModal = () => {
-        const modal = document.getElementById('myModal');
-        modal.style.display = 'none';
-    };
-
-    const claimPopup = document.getElementById('claimPopup');
-    claimPopup.style.display = 'block';
-
-    window.closePopup = () => {
-        claimPopup.style.display = 'none';
-    };
-
-    window.claimTickets = async () => {
-        const username = userInfo.textContent;
-        const response = await fetch(`/claimTickets?username=${encodeURIComponent(username)}`);
-        const data = await response.json();
-
-        if (data.success) {
-            tickets = data.tickets;
-            userTickets.textContent = tickets;
-            closePopup();
-        } else {
-            console.error('Failed to claim tickets:', data.error);
-        }
-    };
+    }
 });
