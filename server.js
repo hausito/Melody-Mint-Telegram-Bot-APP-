@@ -11,7 +11,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Replace with your bot token
-const token = process.env.BOT_TOKEN || '6750160592:AAH-hbeHm6mmswN571d3UeSkoX5v1ntvceQ';
+const token = process.env.BOT_TOKEN || '6750160592:AAGxbke78fBFSJ5nUkEBcSQErMqntgaDwCY';
 const miniAppUrl = 'https://melodymint-37ad5073fe0d.herokuapp.com/'; 
 const imagePath = 'photo1.jpg';  // Replace with the actual path to your image
 // Create a bot that uses 'polling' to fetch new updates
