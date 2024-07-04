@@ -1,3 +1,5 @@
+
+
 const express = require('express');
 const path = require('path');
 const { Pool } = require('pg');
@@ -50,13 +52,12 @@ const generateAuthCode = () => {
     return crypto.randomBytes(8).toString('hex');
 };
 
-
 // Generate unique Telegram ID
 const generateTelegramId = () => {
     return crypto.randomBytes(8).toString('hex');
 };
 
-
+// Insert user and referral function
 const insertUserAndReferral = async (username) => {
     const client = await pool.connect();
     try {
@@ -67,35 +68,29 @@ const insertUserAndReferral = async (username) => {
         const checkUserResult = await client.query(checkUserQuery, [username]);
 
         if (checkUserResult.rows.length > 0) {
+            // User already exists, handle appropriately (maybe throw an error or update existing user)
             console.log(`User with username ${username} already exists.`);
             return { userExists: true };
         }
 
-        console.log(`Inserting new user: ${username}`);
-        // Insert new user
+        // User does not exist, proceed with insertion
         const insertQuery = `
             INSERT INTO users (username, points, tickets, referral_link, friends_invited)
             VALUES ($1, $2, $3, $4, $5)
             RETURNING user_id, points, tickets
         `;
-        const insertValues = [username, 0, 100, '', 0];
+        const insertValues = [username, 0, 100, '', 0]; // No referralLink needed initially
         const insertResult = await client.query(insertQuery, insertValues);
-
-        console.log(`User inserted: ${insertResult.rows[0]}`);
 
         const userId = insertResult.rows[0].user_id;
         const userReferralLink = `ref${userId}`;
         const authCode = generateAuthCode();
-        
-        console.log(`Generated auth code: ${authCode} for user ID: ${userId}`);
 
-        const updateResult = await client.query('UPDATE users SET referral_link = $1, auth_code = $2 WHERE user_id = $3', [userReferralLink, authCode, userId]);
-        
-        console.log(`Update result: ${updateResult}`);
+        await client.query('UPDATE users SET referral_link = $1, auth_code = $2 WHERE user_id = $3', [userReferralLink, authCode, userId]);
 
-        await client.query('COMMIT');
         console.log(`New user created with ID: ${userId}, referral link: ${userReferralLink}, auth code: ${authCode}`);
 
+        await client.query('COMMIT');
         return { ...insertResult.rows[0], authCode };
     } catch (error) {
         await client.query('ROLLBACK');
