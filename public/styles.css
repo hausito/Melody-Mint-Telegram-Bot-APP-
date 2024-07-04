@@ -12,7 +12,7 @@ body {
     background-repeat: no-repeat;
     color: #333;
 }
-.main-container {
+.header {
     position: relative;
     width: 100%;
     max-width: 1000px; 
