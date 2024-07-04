@@ -12,7 +12,12 @@ body {
     background-repeat: no-repeat;
     color: #333;
 }
-
+.main-container {
+    position: relative;
+    width: 100%;
+    max-width: 1000px; 
+    margin: 0 auto; 
+}
 #gameContainer {
     flex-grow: 1;
     width: 100vw;
