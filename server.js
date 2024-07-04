@@ -165,6 +165,7 @@ Web3 Integration: Transfer your music into the blockchain, giving sound a real m
 });
 
 
+
 app.get('/getUserData', async (req, res) => {
     const { username } = req.query;
 
@@ -259,7 +260,8 @@ app.post('/saveUser', async (req, res) => {
             client.release();
             res.status(200).json({ success: true, points: result.rows[0].points, tickets: result.rows[0].tickets });
 
-
+            // Notify user via Telegram
+            bot.sendMessage(existingUser.rows[0].telegram_id, `Your points have been updated. Current points: ${result.rows[0].points}`);
         } else {
             // User does not exist, insert new user
             const insertQuery = 'INSERT INTO users (username, points, tickets) VALUES ($1, $2, $3) RETURNING points, tickets';
@@ -292,6 +294,8 @@ app.post('/updateTickets', async (req, res) => {
         if (result.rows.length > 0) {
             res.status(200).json({ success: true, data: result.rows[0] });
 
+            // Notify user via Telegram
+            bot.sendMessage(result.rows[0].telegram_id, `Your tickets have been updated. Current tickets: ${result.rows[0].tickets}`);
         } else {
             res.status(404).json({ success: false, error: 'User not found' });
         }
@@ -340,6 +344,8 @@ cron.schedule('31 16 * * *', async () => {
     timezone: 'Europe/Chisinau' // Set the timezone to Chisinau
 });
 
+
+
 app.post('/claimTickets', async (req, res) => {
     const { username } = req.body;
 
@@ -370,6 +376,7 @@ app.post('/claimTickets', async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 });
+
 
 
 bot.onText(/\/start (.+)/, async (msg, match) => {
