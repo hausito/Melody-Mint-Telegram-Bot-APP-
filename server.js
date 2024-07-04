@@ -165,29 +165,27 @@ Web3 Integration: Transfer your music into the blockchain, giving sound a real m
 });
 
 
-
-// Endpoint to fetch initial user data (points and tickets)
 app.get('/getUserData', async (req, res) => {
+    const { username } = req.query;
+
+    if (!username) {
+        return res.status(400).send('Username is required');
+    }
+
     try {
-        const { username, referralLink } = req.query;
-
-        if (!username) {
-            return res.status(400).json({ success: false, error: 'Username is required' });
-        }
-
         const client = await pool.connect();
-        const result = await client.query('SELECT user_id, points, tickets FROM users WHERE username = $1', [username]);
+        const result = await client.query('SELECT tickets, points, has_claimed_tickets FROM users WHERE username = $1', [username]);
 
         if (result.rows.length > 0) {
-            res.status(200).json({ success: true, points: result.rows[0].points, tickets: result.rows[0].tickets });
+            const user = result.rows[0];
+            res.status(200).json({ success: true, tickets: user.tickets, points: user.points, has_claimed_tickets: user.has_claimed_tickets });
         } else {
-            const newUser = await insertUserAndReferral(username, referralLink);
-            res.status(200).json({ success: true, points: newUser.points, tickets: newUser.tickets });
+            res.status(404).json({ success: false, message: 'User not found' });
         }
 
         client.release();
     } catch (err) {
-        console.error('Error in getUserData endpoint:', err);
+        console.error('Error fetching user data:', err);
         res.status(500).json({ success: false, error: err.message });
     }
 });
@@ -261,8 +259,7 @@ app.post('/saveUser', async (req, res) => {
             client.release();
             res.status(200).json({ success: true, points: result.rows[0].points, tickets: result.rows[0].tickets });
 
-            // Notify user via Telegram
-            bot.sendMessage(existingUser.rows[0].telegram_id, `Your points have been updated. Current points: ${result.rows[0].points}`);
+
         } else {
             // User does not exist, insert new user
             const insertQuery = 'INSERT INTO users (username, points, tickets) VALUES ($1, $2, $3) RETURNING points, tickets';
@@ -295,8 +292,6 @@ app.post('/updateTickets', async (req, res) => {
         if (result.rows.length > 0) {
             res.status(200).json({ success: true, data: result.rows[0] });
 
-            // Notify user via Telegram
-            bot.sendMessage(result.rows[0].telegram_id, `Your tickets have been updated. Current tickets: ${result.rows[0].tickets}`);
         } else {
             res.status(404).json({ success: false, error: 'User not found' });
         }
@@ -306,17 +301,43 @@ app.post('/updateTickets', async (req, res) => {
     }
 });
 
-// Schedule a task to reset the claim status every day at midnight
-cron.schedule('0 0 * * *', async () => {
+
+cron.schedule('31 16 * * *', async () => {
     try {
         const client = await pool.connect();
+
+        // Send message to all users
+        const getUsersQuery = 'SELECT telegram_id FROM users';
+        const result = await client.query(getUsersQuery);
+        const userIds = result.rows.map(row => row.telegram_id);
+
+        const message = `🎟️ Don't forget to claim your free 10 tickets today! 🎟️`;
+
+        const options = {
+            reply_markup: {
+                inline_keyboard: [
+                    [{ text: 'Claim Now', url: 'https://t.me/melodymint_bot/melodymint' }]
+                ]
+            }
+        };
+
+        userIds.forEach(userId => {
+            bot.sendMessage(userId, message, options)
+                .then(() => console.log(`Message sent to user ${userId}`))
+                .catch(err => console.error(`Error sending message to user ${userId}:`, err));
+        });
+
+        // Reset claim status for all users
         const resetQuery = 'UPDATE users SET has_claimed_tickets = FALSE';
         await client.query(resetQuery);
+
         client.release();
-        console.log('Claim status reset for all users');
+        console.log('Claim status reset for all users at 4:20 PM Chisinau time');
     } catch (err) {
         console.error('Error resetting claim status:', err);
     }
+}, {
+    timezone: 'Europe/Chisinau' // Set the timezone to Chisinau
 });
 
 app.post('/claimTickets', async (req, res) => {
