@@ -165,28 +165,27 @@ Web3 Integration: Transfer your music into the blockchain, giving sound a real m
 });
 
 
-
 app.get('/getUserData', async (req, res) => {
-    const { username } = req.query;
-
-    if (!username) {
-        return res.status(400).send('Username is required');
-    }
-
     try {
+        const { username, referralLink } = req.query;
+
+        if (!username) {
+            return res.status(400).json({ success: false, error: 'Username is required' });
+        }
+
         const client = await pool.connect();
-        const result = await client.query('SELECT tickets, points, has_claimed_tickets FROM users WHERE username = $1', [username]);
+        const result = await client.query('SELECT user_id, points, tickets FROM users WHERE username = $1', [username]);
 
         if (result.rows.length > 0) {
-            const user = result.rows[0];
-            res.status(200).json({ success: true, tickets: user.tickets, points: user.points, has_claimed_tickets: user.has_claimed_tickets });
+            res.status(200).json({ success: true, points: result.rows[0].points, tickets: result.rows[0].tickets });
         } else {
-            res.status(404).json({ success: false, message: 'User not found' });
+            const newUser = await insertUserAndReferral(username, referralLink);
+            res.status(200).json({ success: true, points: newUser.points, tickets: newUser.tickets });
         }
 
         client.release();
     } catch (err) {
-        console.error('Error fetching user data:', err);
+        console.error('Error in getUserData endpoint:', err);
         res.status(500).json({ success: false, error: err.message });
     }
 });
