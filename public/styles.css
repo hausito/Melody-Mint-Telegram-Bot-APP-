@@ -12,6 +12,7 @@ body {
     background-repeat: no-repeat;
     color: #333;
 }
+
 .background-image {
     position: absolute;
     top: 0;
@@ -19,9 +20,31 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    z-index: -2;
-    background: none; 
+    z-index: -1;
 }
+
+#gameContainer {
+    flex-grow: 1;
+    width: 100vw;
+    margin: 0;
+    border: none;
+    background-color: transparent;
+}
+
+#header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000; /* Ensure it's above other elements */
+}
+
 #topHalf {
     position: relative;
     width: 100%;
@@ -32,91 +55,12 @@ body {
     align-items: center;
     overflow: hidden;
 }
-#gameContainer {
-    flex-grow: 1;
-    width: 100vw;
-    margin: 0;
-    border: none;
-    background-color: transparent;
-}
-
-/* Modal styling */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-}
-
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 400px;
-    text-align: center;
-    position: relative;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 28px;
-    font-weight: bold;
-    color: #888;
-    cursor: pointer;
-}
-
-.close:hover,
-.close:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-canvas {
-    display: block;
-    width: 100%;
-    height: 100%;
-    background-color: transparent;
-}
-
-#points {
-    margin-right: 50px;
-}
-
-#pointsContainer, #ticketsContainer {
-    display: flex;
-    align-items: center;
-}
-
-#pointsContainer .icon, #ticketsContainer .icon {
-    width: 50px;
-    height: 50px;
-    margin-right: 10px;
-}
-
-#points, #ticketsInfo {
-    font-size: 20px;
-    color: #000;
-    font-weight: bold;
-    white-space: nowrap; /* Ensure text does not wrap */
-}
 
 #startScreen {
     position: absolute;
-    top: 0;
+    top: 50vh;
     left: 0;
     width: 100%;
-    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -131,29 +75,7 @@ canvas {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
-.text-custom {
-    color: #13DAAA;
-}
 
-.icon-size {
-    width: 20px; 
-    height: 20px; 
-}
-.bg-earn-coins {
-    background-color: #9A20AA;
-}
-.bg-tasks {
-    background-color: #1788B3;
-}
-.bg-upgrade {
-    background-color: #9A20AA;
-}
-.shadow-inner-custom {
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5), inset 0 -2px 4px rgba(0, 0, 0, 0.3);
-}
-.shadow-inner-custom-button {
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4), inset 0 -1px 2px rgba(0, 0, 0, 0.3);
-}
 .buttons-container {
     display: flex;
     flex-direction: column;
@@ -162,9 +84,11 @@ canvas {
     max-width: 500px; 
     margin: 0 auto; 
 }
+
 .button-custom {
     width: 100%;
 }
+
 #footer {
     display: flex;
     justify-content: space-around;
@@ -205,66 +129,4 @@ canvas {
 
 .footer-button:focus {
     outline: none;
-}
-
-.popup {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    left: 0;
-    bottom: 0;
-    width: 100%; /* Full width */
-    height: 50%; /* Half height */
-    background-color: rgba(0, 0, 0, 0.5); /* Black background with opacity */
-}
-
-.popup-content {
-    position: absolute;
-    bottom: 0;
-    background-color: #fefefe;
-    width: 100%;
-    padding: 20px;
-    border-radius: 20px 20px 0 0; /* Rounded corners on top */
-    text-align: center;
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-#header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    z-index: 1000; /* Ensure it's above other elements */
-}
-
-#userInfo {
-    margin: 0 auto; /* Center the username */
-}
-
-#inviteButton {
-    cursor: pointer;
-}
-
-.footer-button img {
-    max-width: 30px;
-    height: auto;
 }
