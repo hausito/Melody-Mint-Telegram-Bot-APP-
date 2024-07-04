@@ -29,6 +29,9 @@ body {
     margin: 0;
     border: none;
     background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 #header {
@@ -51,9 +54,10 @@ body {
     height: 50vh;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     overflow: hidden;
+    padding-top: 20px;
 }
 
 #startScreen {
@@ -81,8 +85,6 @@ body {
     flex-direction: column;
     gap: 1rem;
     width: 100%;
-    max-width: 500px; 
-    margin: 0 auto; 
 }
 
 .button-custom {
