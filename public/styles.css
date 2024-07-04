@@ -5,7 +5,7 @@ body {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    min-height: 100vh; /* Changed to min-height to ensure the body covers the entire viewport height */
     background-image: url('background.jpg'); /* Replace 'background.jpg' with your image path */
     background-size: cover;
     background-position: center;
@@ -148,6 +148,9 @@ button:hover {
     display: flex;
     justify-content: space-around;
     align-items: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
 }
 
 .icon-background {
