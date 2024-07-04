@@ -43,7 +43,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(0, 0, 0, 0.6);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     z-index: 1000; /* Ensure it's above other elements */
 }
@@ -74,10 +74,17 @@ body {
     width: 80%;
     max-width: 400px;
     padding: 20px;
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(0, 0, 0, 0.8);
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
+}
+
+.coin-container {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 10px;
+    border-radius: 50px;
+    margin-bottom: 20px;
 }
 
 .buttons-container {
@@ -95,7 +102,7 @@ body {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(0, 0, 0, 0.8);
     padding: 10px 0;
     position: fixed;
     bottom: 0;
