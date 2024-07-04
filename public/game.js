@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     playButton.addEventListener('click', async () => {
         if (tickets > 0) {
             tickets--;
-            userTickets.textContent = ` ${tickets}`;
+            userTickets.textContent = tickets;
 
             // Update tickets on the server
             try {
@@ -211,7 +211,6 @@ function addNewTile() {
         }
     }
 }
-
 
     function handleClick(event) {
         if (!gameRunning) return;
