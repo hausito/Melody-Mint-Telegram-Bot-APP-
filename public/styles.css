@@ -185,41 +185,32 @@ button:hover {
 }
 /* Add this to your existing styles.css */
 
-.footer {
+/* Add this to your existing styles.css */
+
+#footer {
     background-color: #0F0C43;
     padding: 1rem;
     display: flex;
-    justify-content: space-around; /* Center the icons */
+    justify-content: space-around; /* Center the buttons */
     align-items: center;
 }
 
-.footer .icon-background {
-    padding: 0.5rem; /* Adjust padding for better spacing */
-    border-radius: 50%; /* Rounded background for icons */
+.footer-button {
+    background-color: transparent;
+    border: none;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
-.footer .icon-background:hover {
-    background-color: #1E1A5F; /* Darken background on hover */
-}
-
-.footer img {
-    width: 32px; /* Adjust icon size */
+.footer-button img {
+    width: 32px; /* Adjust image size */
     height: 32px;
+    transition: transform 0.2s ease;
 }
 
-/* Define background colors for different icons */
-.bg-home {
-    background-color: #6BC6FF;
-}
-
-.bg-trophy {
-    background-color: #FFD166;
-}
-
-.bg-package {
-    background-color: #EF476F;
+.footer-button:hover {
+    opacity: 0.8; /* Reduce opacity on hover */
+    transform: scale(1.1); /* Scale up slightly on hover */
 }
 
 
