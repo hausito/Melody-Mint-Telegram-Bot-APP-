@@ -1,24 +1,23 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    if (window.Telegram && window.Telegram.WebApp) {
-        window.Telegram.WebApp.expand();
-    }
-    await checkTicketClaimStatus();
-});
-
-async function checkTicketClaimStatus() {
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.expand();
+                await checkTicketClaimStatus();
+            }
+            await fetchUserData();
+        });
+    async function checkTicketClaimStatus() {
     const userInfo = document.getElementById('userInfo').textContent;
-    console.log('Checking ticket claim status for user:', userInfo);
     try {
-        const response = await fetch(`/getUserData?username=${encodeURIComponent(userInfo)}`);
+        const response = await fetch(/getUserData?username=${encodeURIComponent(userInfo)});
         const data = await response.json();
         console.log('User data received:', data);
 
         if (data.success) {
             const ticketsInfo = document.getElementById('ticketsInfo');
-            ticketsInfo.textContent = `${data.tickets}`;
+            ticketsInfo.textContent = ${data.tickets};
 
             const pointsInfo = document.getElementById('points');  // Update points display
-            pointsInfo.textContent = `${data.points}`;
+            pointsInfo.textContent = ${data.points};
 
             if (!data.has_claimed_tickets) {
                 document.getElementById('claimPopup').style.display = 'block';
@@ -45,8 +44,8 @@ async function claimTickets() {
 
         if (data.success) {
             alert('Tickets claimed successfully!');
-            await updateLocalTickets();
             document.getElementById('claimPopup').style.display = 'none';
+            await fetchUserData(); // Refetch user data to update local state
         } else {
             alert(data.message);
             document.getElementById('claimPopup').style.display = 'none';
@@ -57,54 +56,52 @@ async function claimTickets() {
     }
 }
 
+        async function showReferralLink() {
+            const userInfo = document.getElementById('userInfo').textContent;
+            try {
+                const response = await fetch(/getReferralLink?username=${encodeURIComponent(userInfo)});
+                const data = await response.json();
 
-async function showReferralLink() {
-    const userInfo = document.getElementById('userInfo').textContent;
-    console.log('Fetching referral link for user:', userInfo);
-    try {
-        const response = await fetch(`/getReferralLink?username=${encodeURIComponent(userInfo)}`);
-        const data = await response.json();
+                if (data.success) {
+                    const referralLink = https://t.me/melodymint_bot?start=${data.authCode};
 
-        if (data.success) {
-            const referralLink = `https://t.me/melodymint_bot?start=${data.authCode}`;
+                    // Display modal with referral link
+                    const modal = document.getElementById('myModal');
+                    const modalContent = document.getElementById('modalContent');
+                    const friendsInvited = document.getElementById('friendsInvited');
+                    modal.style.display = 'block';
+                    modalContent.textContent = referralLink;
 
-            // Display modal with referral link
+                    // Automatically copy to clipboard for mobile
+                    const dummyInput = document.createElement('input');
+                    document.body.appendChild(dummyInput);
+                    dummyInput.value = referralLink;
+                    dummyInput.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(dummyInput);
+
+                    // Display number of friends invited
+                    friendsInvited.textContent = Friends invited: ${data.friendsInvited};
+                } else {
+                    console.error('Failed to fetch referral link:', data.error);
+                }
+            } catch (error) {
+                console.error('Error fetching referral link:', error);
+            }
+        }
+
+        function closeModal() {
             const modal = document.getElementById('myModal');
-            const modalContent = document.getElementById('modalContent');
-            const friendsInvited = document.getElementById('friendsInvited');
-            modal.style.display = 'block';
-            modalContent.textContent = referralLink;
+            modal.style.display = 'none';
+        }
 
-            // Automatically copy to clipboard for mobile
+        function copyToClipboard() {
+            const referralLink = document.getElementById('modalContent').textContent;
             const dummyInput = document.createElement('input');
             document.body.appendChild(dummyInput);
             dummyInput.value = referralLink;
             dummyInput.select();
             document.execCommand('copy');
             document.body.removeChild(dummyInput);
-
-            // Display number of friends invited
-            friendsInvited.textContent = `Friends invited: ${data.friendsInvited}`;
-        } else {
-            console.error('Failed to fetch referral link:', data.error);
+            alert('Referral link copied to clipboard!');
         }
-    } catch (error) {
-        console.error('Error fetching referral link:', error);
-    }
-}
-
-function closeModal() {
-    const modal = document.getElementById('myModal');
-    modal.style.display = 'none';
-}
-
-function copyToClipboard() {
-    const referralLink = document.getElementById('modalContent').textContent;
-    const dummyInput = document.createElement('input');
-    document.body.appendChild(dummyInput);
-    dummyInput.value = referralLink;
-    dummyInput.select();
-    document.execCommand('copy');
-    document.body.removeChild(dummyInput);
-    alert('Referral link copied to clipboard!');
-}
