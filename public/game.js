@@ -58,48 +58,45 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     fetchUserData();
 
-    playButton.addEventListener('click', async () => {
-    if (tickets > 0) {
-        tickets--; // Deducting tickets locally
-        userTickets.textContent = tickets; // Updating UI
+playButton.addEventListener('click', async () => {
+    try {
+        const response = await fetch('/claimTickets', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username: userInfo.textContent }),
+        });
 
-        // Update tickets on the server
-        try {
-            const response = await fetch('/claimTickets', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username: userInfo.textContent }),
-            });
+        const result = await response.json();
+        if (result.success) {
+            tickets = result.tickets; // Update local ticket count
+            userTickets.textContent = tickets; // Update UI
 
-            const result = await response.json();
-            if (result.success) {
-                // Optionally update UI or perform other actions upon successful ticket claim
-                console.log('Tickets claimed successfully');
+            // Check if tickets were claimed successfully
+            if (result.has_claimed_tickets) {
+                // Proceed with game initialization
+                gameActive = true;
+                startScreen.style.display = 'none';
+                footer.style.display = 'none';
+                header.style.display = 'none';
+                startMusic();
+                initGame();
+                lastTimestamp = performance.now();
+                requestAnimationFrame(gameLoop);
             } else {
-                console.error('Error claiming tickets:', result.message);
-                // Optionally handle error messages or UI updates upon failed ticket claim
+                alert('Failed to claim tickets for today.');
             }
-        } catch (error) {
-            console.error('Error updating tickets:', error);
-            // Handle fetch or network errors here
+        } else {
+            console.error('Error claiming tickets:', result.message);
+            alert('Error claiming tickets. Please try again later.');
         }
-    } else {
-        alert('No more tickets available!');
-        return;
+    } catch (error) {
+        console.error('Error claiming tickets:', error);
+        alert('Error claiming tickets. Please try again later.');
     }
-
-    // Proceed with game initialization or other actions after ticket claim
-    gameActive = true; // Set game as active
-    startScreen.style.display = 'none';
-    footer.style.display = 'none';
-    header.style.display = 'none';
-    startMusic();
-    initGame();
-    lastTimestamp = performance.now();
-    requestAnimationFrame(gameLoop);
 });
+
 
 
     tasksButton.addEventListener('click', () => {
