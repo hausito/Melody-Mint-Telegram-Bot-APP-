@@ -14,7 +14,7 @@
 
         if (data.success) {
             const ticketsInfo = document.getElementById('ticketsInfo');
-            ticketsInfo.textContent = `Tickets: ${data.tickets}`;
+            ticketsInfo.textContent = `${data.tickets}`;
 
             const pointsInfo = document.getElementById('points');  // Update points display
             pointsInfo.textContent = `Points: ${data.points}`;
