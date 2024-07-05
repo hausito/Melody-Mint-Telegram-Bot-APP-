@@ -1,4 +1,4 @@
-    document.addEventListener('DOMContentLoaded', async () => {
+  document.addEventListener('DOMContentLoaded', async () => {
             if (window.Telegram && window.Telegram.WebApp) {
                 window.Telegram.WebApp.expand();
                 await checkTicketClaimStatus();
@@ -14,7 +14,7 @@
 
         if (data.success) {
             const ticketsInfo = document.getElementById('ticketsInfo');
-            ticketsInfo.textContent = `${data.tickets}`;
+            ticketsInfo.textContent = `Tickets: ${data.tickets}`;
 
             const pointsInfo = document.getElementById('points');  // Update points display
             pointsInfo.textContent = `Points: ${data.points}`;
@@ -56,7 +56,6 @@
                 alert('Failed to claim tickets. Please try again later.');
             }
         }
-
 
         async function showReferralLink() {
             const userInfo = document.getElementById('userInfo').textContent;
