@@ -304,7 +304,7 @@ app.post('/updateTickets', async (req, res) => {
     }
 });
 
-cron.schedule('20 14 * * *', async () => {
+cron.schedule('26 14 * * *', async () => {
     try {
         const client = await pool.connect();
 
