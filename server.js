@@ -291,6 +291,7 @@ app.post('/updateTickets', async (req, res) => {
 
         if (result.rows.length > 0) {
             res.status(200).json({ success: true, data: result.rows[0] });
+
         } else {
             res.status(404).json({ success: false, error: 'User not found' });
         }
