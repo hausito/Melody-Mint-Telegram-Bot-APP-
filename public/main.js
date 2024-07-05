@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 window.Telegram.WebApp.expand();
                 await checkTicketClaimStatus();
             }
-            await fetchUserData();
+    
         });
     async function checkTicketClaimStatus() {
     const userInfo = document.getElementById('userInfo').textContent;
