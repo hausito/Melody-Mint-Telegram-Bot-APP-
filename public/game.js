@@ -58,12 +58,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     fetchUserData();
 
-    playButton.addEventListener('click', async () => {
-        if (tickets > 0) {
-            tickets--;
-            userTickets.textContent = tickets;
+  playButton.addEventListener('click', async () => {
+    if (tickets > 0) {
+        tickets--;
+        userTickets.textContent = tickets;
 
-            // Update tickets on the server
+        // Update tickets on the server
         try {
             const response = await fetch('/updateTickets', {
                 method: 'POST',
@@ -80,19 +80,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (error) {
             console.error('Error updating tickets:', error);
         }
-    } else {
-        alert('No more tickets available!');
-        return;
-    }
-        gameActive = true; // Set game as active
+
+        // Proceed with starting the game
+        gameActive = true;
         startScreen.style.display = 'none';
         footer.style.display = 'none';
-        header.style.display = 'none'; 
+        header.style.display = 'none';
         startMusic();
         initGame();
         lastTimestamp = performance.now();
         requestAnimationFrame(gameLoop);
-    });
+    } else {
+        alert('No more tickets available!');
+        return;
+    }
+});
+
 
     tasksButton.addEventListener('click', () => {
         alert('Tasks: Coming Soon!');
