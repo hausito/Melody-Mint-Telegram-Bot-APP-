@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     };
     preloadImages();
-
+    let gameActive = false;
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const backgroundMusic = new Audio('background-music.mp3');
@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             alert('No more tickets available!');
             return;
         }
-
+        gameActive = true; // Set game as active
         startScreen.style.display = 'none';
         footer.style.display = 'none';
         header.style.display = 'none'; 
@@ -335,6 +335,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     async function gameOver() {
+        if (!gameActive) return;
+        
+        gameActive = false;
         await saveUser(userInfo.textContent, score);
         const redirectURL = `transition.html?score=${score}`;
         window.location.replace(redirectURL);
