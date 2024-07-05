@@ -60,8 +60,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     playButton.addEventListener('click', async () => {
         if (tickets > 0) {
-            tickets--;
-            userTickets.textContent = tickets;
+            tickets--; // Decrease tickets locally
+            userTickets.textContent = tickets; // Update UI
 
             // Update tickets on the server
             try {
@@ -70,24 +70,31 @@ document.addEventListener('DOMContentLoaded', async () => {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ username: userInfo.textContent, tickets }),
+                    body: JSON.stringify({ username: userInfo.textContent, tickets }), // Send updated tickets count
                 });
 
                 const result = await response.json();
                 if (!result.success) {
                     console.error('Error updating tickets:', result.error);
+                    // Optionally, revert the local change if update fails
+                    // tickets++; 
+                    // userTickets.textContent = tickets;
                 }
             } catch (error) {
                 console.error('Error updating tickets:', error);
+                // Optionally, revert the local change if update fails
+                // tickets++;
+                // userTickets.textContent = tickets;
             }
         } else {
             alert('No more tickets available!');
             return;
         }
+
         gameActive = true; // Set game as active
         startScreen.style.display = 'none';
         footer.style.display = 'none';
-        header.style.display = 'none'; 
+        header.style.display = 'none';
         startMusic();
         initGame();
         lastTimestamp = performance.now();
@@ -253,14 +260,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     function gameLoop(timestamp) {
         if (!gameRunning) return;
 
-        const deltaTime = (timestamp - lastTimestamp) / 1000; 
+        const deltaTime = (timestamp - lastTimestamp) / 1000;
         lastTimestamp = timestamp;
 
         ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
         let outOfBounds = false;
         tiles.forEach(tile => {
-            tile.move(TILE_SPEED * deltaTime * 60); 
+            tile.move(TILE_SPEED * deltaTime * 60);
             tile.updateOpacity();
             if (tile.isOutOfBounds()) {
                 outOfBounds = true;
@@ -299,7 +306,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         ctx.fillStyle = SKY_BLUE;
         ctx.fillText(`SCORE: ${score}`, WIDTH / 2, 30);
 
-        TILE_SPEED += SPEED_INCREMENT * deltaTime * 60; 
+        TILE_SPEED += SPEED_INCREMENT * deltaTime * 60;
 
         requestAnimationFrame(gameLoop);
     }
@@ -336,8 +343,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function gameOver() {
         if (!gameActive) return;
-        
+
         gameActive = false;
+        // Only save the user if the game was active
         await saveUser(userInfo.textContent, score);
         const redirectURL = `transition.html?score=${score}`;
         window.location.replace(redirectURL);
@@ -355,8 +363,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const result = await response.json();
             if (result.success) {
-                points = result.data.points; 
-                userPoints.textContent = points; 
+                points = result.data.points;
+                userPoints.textContent = points;
+                tickets = result.data.tickets; // Update tickets from server response
+                userTickets.textContent = tickets; // Update UI with updated tickets
             } else {
                 console.error('Error saving user:', result.error);
             }
