@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     };
     preloadImages();
+
     let gameActive = false;
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
@@ -56,7 +57,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     };
 
-    fetchUserData();
+    await fetchUserData();
 
     playButton.addEventListener('click', async () => {
         if (tickets > 0) {
@@ -260,13 +261,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         let outOfBounds = false;
         tiles.forEach(tile => {
-            tile.move(TILE_SPEED * deltaTime * 60); 
+            tile.move(TILE_SPEED * deltaTime);
+            tile.draw();
             tile.updateOpacity();
             if (tile.isOutOfBounds()) {
                 outOfBounds = true;
             }
-            tile.draw();
         });
+
+        tiles = tiles.filter(tile => tile.opacity > 0); 
+
+        TILE_SPEED += SPEED_INCREMENT;
 
         if (outOfBounds) {
             gameRunning = false;
@@ -274,94 +279,50 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        tiles = tiles.filter(tile => tile.y < HEIGHT && tile.opacity > 0);
-
-        while (tiles.length < 4) {
-            addNewTile();
-        }
-
-        // Draw vertical lines
-        ctx.strokeStyle = BORDER_COLOR;
-        ctx.lineWidth = 2;
-        for (let i = 1; i < COLUMNS; i++) {
-            const x = i * TILE_WIDTH;
-            ctx.beginPath();
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x, HEIGHT);
-            ctx.stroke();
-        }
-
-        ctx.fillStyle = SHADOW_COLOR;
-        ctx.font = 'bold 24px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText(`SCORE: ${score}`, WIDTH / 2 + 2, 32);
-
         ctx.fillStyle = SKY_BLUE;
-        ctx.fillText(`SCORE: ${score}`, WIDTH / 2, 30);
+        ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
-        TILE_SPEED += SPEED_INCREMENT * deltaTime * 60; 
+        tiles.forEach(tile => {
+            tile.move(TILE_SPEED);
+            tile.draw();
+        });
+
+        ctx.fillStyle = 'black';
+        ctx.font = '20px Arial';
+        ctx.fillText(`Score: ${score}`, 10, 30);
 
         requestAnimationFrame(gameLoop);
     }
 
-    function startMusic() {
-        backgroundMusic.play().catch(function(error) {
-            console.error('Error playing audio:', error);
+    function gameOver() {
+        backgroundMusic.pause();
+        alert(`Game Over! Your score is ${score}`);
+        points += score;
+        userPoints.textContent = points;
+
+        // Update points on the server
+        fetch('/updatePoints', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username: userInfo.textContent, points }),
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (!result.success) {
+                console.error('Error updating points:', result.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error updating points:', error);
         });
-    }
 
-    tg.onEvent('themeChanged', function() {
-        const themeParams = tg.themeParams;
-        if (themeParams && themeParams.bg_color && !themeParams.bg_color.includes('unset') && !themeParams.bg_color.includes('none')) {
-            document.body.style.backgroundColor = themeParams.bg_color;
-        }
-    });
-
-    tg.ready().then(function() {
-        if (tg.themeParams) {
-            const themeParams = tg.themeParams;
-            if (themeParams.bg_color && !themeParams.bg_color.includes('unset') && !themeParams.bg_color.includes('none')) {
-                document.body.style.backgroundColor = themeParams.bg_color;
-            }
-        }
-        if (tg.initDataUnsafe?.user) {
-            userInfo.textContent = tg.initDataUnsafe.user.username || `${tg.initDataUnsafe.user.first_name} ${tg.initDataUnsafe.user.last_name}`;
-        } else {
-            userInfo.textContent = 'Username';
-        }
-        if (tg.initDataUnsafe?.is_explicitly_enabled) {
-            startMusic();
-        }
-    });
-
-    async function gameOver() {
-        if (!gameActive) return;
-        
-        gameActive = false;
-        await saveUser(userInfo.textContent, score);
-        const redirectURL = `transition.html?score=${score}`;
-        window.location.replace(redirectURL);
-    }
-
-    async function saveUser(username, scoreToAdd) {
-        try {
-            const response = await fetch('/saveUser', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, points: scoreToAdd }),
-            });
-
-            const result = await response.json();
-            if (result.success) {
-                points = result.data.points; 
-                userPoints.textContent = points; 
-            } else {
-                console.error('Error saving user:', result.error);
-            }
-        } catch (error) {
-            console.error('Error saving user:', error);
-        }
+        fetchUserData(); // Re-fetch user data to update the UI
+        gameActive = false; // Set game as inactive
+        startScreen.style.display = 'flex'; // Show start screen
+        footer.style.display = 'flex'; // Show footer
+        header.style.display = 'flex'; // Show header
     }
 });
+
