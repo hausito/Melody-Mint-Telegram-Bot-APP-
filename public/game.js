@@ -316,7 +316,7 @@ function addNewTile() {
             document.body.style.backgroundColor = themeParams.bg_color;
         }
     });
-
+ 
     tg.ready().then(function() {
         if (tg.themeParams) {
             const themeParams = tg.themeParams;
