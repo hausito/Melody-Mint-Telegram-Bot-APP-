@@ -59,24 +59,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     fetchUserData();
 
 playButton.addEventListener('click', async () => {
-    try {
-        const response = await fetch('/claimTickets', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ username: userInfo.textContent }),
-        });
+    if (tickets > 0) {
+        try {
+            const response = await fetch('/claimTickets', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username: userInfo.textContent }),
+            });
 
-        const result = await response.json();
-        if (result.success) {
-            tickets = result.tickets; // Update local ticket count
-            userTickets.textContent = tickets; // Update UI
+            const result = await response.json();
+            if (result.success) {
+                // Update local tickets count and UI
+                tickets = result.tickets;
+                userTickets.textContent = tickets;
 
-            // Check if tickets were claimed successfully
-            if (result.has_claimed_tickets) {
                 // Proceed with game initialization
-                gameActive = true;
+                gameActive = true; // Set game as active
                 startScreen.style.display = 'none';
                 footer.style.display = 'none';
                 header.style.display = 'none';
@@ -85,18 +85,20 @@ playButton.addEventListener('click', async () => {
                 lastTimestamp = performance.now();
                 requestAnimationFrame(gameLoop);
             } else {
-                alert('Failed to claim tickets for today.');
+                console.error('Error claiming tickets:', result.message);
+                // Optionally handle UI updates or error messages here
+                alert('Error claiming tickets. Please try again later.');
             }
-        } else {
-            console.error('Error claiming tickets:', result.message);
+        } catch (error) {
+            console.error('Error updating tickets:', error);
+            // Handle fetch or network errors here
             alert('Error claiming tickets. Please try again later.');
         }
-    } catch (error) {
-        console.error('Error claiming tickets:', error);
-        alert('Error claiming tickets. Please try again later.');
+    } else {
+        alert('No more tickets available!');
+        return;
     }
 });
-
 
 
     tasksButton.addEventListener('click', () => {
