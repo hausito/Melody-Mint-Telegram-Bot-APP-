@@ -15,10 +15,10 @@ async function checkTicketClaimStatus() {
 
         if (data.success) {
             const ticketsInfo = document.getElementById('ticketsInfo');
-            ticketsInfo.textContent = `Tickets: ${data.tickets}`;
+            ticketsInfo.textContent = `${data.tickets}`;
 
             const pointsInfo = document.getElementById('points');  // Update points display
-            pointsInfo.textContent = `Points: ${data.points}`;
+            pointsInfo.textContent = `${data.points}`;
 
             if (!data.has_claimed_tickets) {
                 document.getElementById('claimPopup').style.display = 'block';
@@ -45,7 +45,7 @@ async function claimTickets() {
 
         if (data.success) {
             alert('Tickets claimed successfully!');
-            document.getElementById('ticketsInfo').textContent = `Tickets: ${data.tickets}`;
+            document.getElementById('ticketsInfo').textContent = `${data.tickets}`;
             document.getElementById('claimPopup').style.display = 'none';
             
             // Trigger event to update tickets in game.js
