@@ -59,6 +59,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     fetchUserData();
 
     playButton.addEventListener('click', async () => {
+        fetchUserData();
         if (tickets > 0) {
             tickets--;
             userTickets.textContent = tickets;
