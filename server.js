@@ -273,6 +273,7 @@ app.post('/saveUser', async (req, res) => {
 });
 
 
+// Endpoint to update tickets
 app.post('/updateTickets', async (req, res) => {
     const { username, tickets } = req.body;
 
@@ -289,6 +290,7 @@ app.post('/updateTickets', async (req, res) => {
 
         if (result.rows.length > 0) {
             res.status(200).json({ success: true, data: result.rows[0] });
+
         } else {
             res.status(404).json({ success: false, error: 'User not found' });
         }
@@ -297,7 +299,6 @@ app.post('/updateTickets', async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 });
-
 
 cron.schedule('26 14 * * *', async () => {
     try {
@@ -353,9 +354,9 @@ app.post('/claimTickets', async (req, res) => {
             if (user.has_claimed_tickets) {
                 res.status(400).json({ success: false, message: 'Tickets already claimed for today' });
             } else {
-                const updateQuery = 'UPDATE users SET tickets = tickets + 10, has_claimed_tickets = TRUE WHERE username = $1 RETURNING tickets';
+                const updateQuery = 'UPDATE users SET tickets = tickets + 10, has_claimed_tickets = TRUE WHERE username = $1 RETURNING tickets, has_claimed_tickets';
                 const updateResult = await client.query(updateQuery, [username]);
-                res.status(200).json({ success: true, tickets: updateResult.rows[0].tickets });
+                res.status(200).json({ success: true, tickets: updateResult.rows[0].tickets, has_claimed_tickets: updateResult.rows[0].has_claimed_tickets });
             }
         } else {
             res.status(404).json({ success: false, message: 'User not found' });
