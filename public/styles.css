@@ -160,7 +160,6 @@ canvas {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.8);
     padding: 10px 0;
     position: fixed;
     bottom: 0;
@@ -171,22 +170,19 @@ canvas {
 }
 
 .footer-button {
-    flex-grow: 1;
     display: flex;
     justify-content: center;
-    align-items: center;
-    padding: 10px;
-    margin: 0 10px;
-    background-color: rgba(255, 255, 255, 0.8);
+    align-items: center;    
     border: none;
+    padding: 1vh 1vh;
     cursor: pointer;
-    border-radius: 10px;
+    border-radius: 100%;
     transition: transform 0.2s ease;
 }
 
 .footer-button img {
-    max-width: 30px;
-    height: auto;
+    width: 3vh;
+    height: 3vh;
     transition: transform 0.2s ease;
 }
 
