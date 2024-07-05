@@ -340,8 +340,6 @@ cron.schedule('26 14 * * *', async () => {
 });
 
 
-
-
 app.post('/claimTickets', async (req, res) => {
     const { username } = req.body;
 
@@ -372,7 +370,6 @@ app.post('/claimTickets', async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 });
-
 
 
 bot.onText(/\/start (.+)/, async (msg, match) => {
