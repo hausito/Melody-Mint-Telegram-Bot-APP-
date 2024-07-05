@@ -1,9 +1,9 @@
-document.addEventListener('DOMContentLoaded', async () => {
+   document.addEventListener('DOMContentLoaded', async () => {
             if (window.Telegram && window.Telegram.WebApp) {
                 window.Telegram.WebApp.expand();
                 await checkTicketClaimStatus();
             }
-    
+            await checkTicketClaimStatus();
         });
     async function checkTicketClaimStatus() {
     const userInfo = document.getElementById('userInfo').textContent;
@@ -44,8 +44,8 @@ async function claimTickets() {
 
         if (data.success) {
             alert('Tickets claimed successfully!');
+            document.getElementById('ticketsInfo').textContent = ${data.tickets};
             document.getElementById('claimPopup').style.display = 'none';
-            await fetchUserData(); // Refetch user data to update local state
         } else {
             alert(data.message);
             document.getElementById('claimPopup').style.display = 'none';
