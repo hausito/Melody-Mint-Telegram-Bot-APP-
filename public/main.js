@@ -35,7 +35,6 @@ async function checkTicketClaimStatus() {
 
 async function claimTickets() {
     const userInfo = document.getElementById('userInfo').textContent;
-    console.log('Attempting to claim tickets for user:', userInfo);
     try {
         const response = await fetch('/claimTickets', {
             method: 'POST',
@@ -43,11 +42,10 @@ async function claimTickets() {
             body: JSON.stringify({ username: userInfo })
         });
         const data = await response.json();
-        console.log('Claim tickets response:', data);
 
         if (data.success) {
             alert('Tickets claimed successfully!');
-            document.getElementById('ticketsInfo').textContent = `${data.tickets}`;
+            await updateLocalTickets();
             document.getElementById('claimPopup').style.display = 'none';
         } else {
             alert(data.message);
@@ -58,6 +56,7 @@ async function claimTickets() {
         alert('Failed to claim tickets. Please try again later.');
     }
 }
+
 
 async function showReferralLink() {
     const userInfo = document.getElementById('userInfo').textContent;
