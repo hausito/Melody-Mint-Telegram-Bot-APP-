@@ -258,6 +258,8 @@ app.post('/saveUser', async (req, res) => {
             const result = await client.query(updateQuery, updateValues);
             client.release();
             res.status(200).json({ success: true, points: result.rows[0].points, tickets: result.rows[0].tickets });
+
+
         } else {
             // User does not exist, insert new user
             const insertQuery = 'INSERT INTO users (username, points, tickets) VALUES ($1, $2, $3) RETURNING points, tickets';
@@ -271,7 +273,6 @@ app.post('/saveUser', async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 });
-
 
 // Endpoint to update tickets
 app.post('/updateTickets', async (req, res) => {
@@ -338,6 +339,9 @@ cron.schedule('26 14 * * *', async () => {
     timezone: 'Europe/Chisinau' // Set the timezone to Chisinau
 });
 
+
+
+
 app.post('/claimTickets', async (req, res) => {
     const { username } = req.body;
 
@@ -354,9 +358,9 @@ app.post('/claimTickets', async (req, res) => {
             if (user.has_claimed_tickets) {
                 res.status(400).json({ success: false, message: 'Tickets already claimed for today' });
             } else {
-                const updateQuery = 'UPDATE users SET tickets = tickets + 10, has_claimed_tickets = TRUE WHERE username = $1 RETURNING tickets, has_claimed_tickets';
+                const updateQuery = 'UPDATE users SET tickets = tickets + 10, has_claimed_tickets = TRUE WHERE username = $1 RETURNING tickets';
                 const updateResult = await client.query(updateQuery, [username]);
-                res.status(200).json({ success: true, tickets: updateResult.rows[0].tickets, has_claimed_tickets: updateResult.rows[0].has_claimed_tickets });
+                res.status(200).json({ success: true, tickets: updateResult.rows[0].tickets });
             }
         } else {
             res.status(404).json({ success: false, message: 'User not found' });
@@ -368,6 +372,7 @@ app.post('/claimTickets', async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 });
+
 
 
 bot.onText(/\/start (.+)/, async (msg, match) => {
