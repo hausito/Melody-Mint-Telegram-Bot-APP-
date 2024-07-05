@@ -59,47 +59,48 @@ document.addEventListener('DOMContentLoaded', async () => {
     fetchUserData();
 
     playButton.addEventListener('click', async () => {
-        if (tickets > 0) {
-            tickets--; // Decrease tickets locally
-            userTickets.textContent = tickets; // Update UI
+    if (tickets > 0) {
+        tickets--; // Deducting tickets locally
+        userTickets.textContent = tickets; // Updating UI
 
-            // Update tickets on the server
-            try {
-                const response = await fetch('/updateTickets', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ username: userInfo.textContent, tickets }), // Send updated tickets count
-                });
+        // Update tickets on the server
+        try {
+            const response = await fetch('/claimTickets', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username: userInfo.textContent }),
+            });
 
-                const result = await response.json();
-                if (!result.success) {
-                    console.error('Error updating tickets:', result.error);
-                    // Optionally, revert the local change if update fails
-                    // tickets++; 
-                    // userTickets.textContent = tickets;
-                }
-            } catch (error) {
-                console.error('Error updating tickets:', error);
-                // Optionally, revert the local change if update fails
-                // tickets++;
-                // userTickets.textContent = tickets;
+            const result = await response.json();
+            if (result.success) {
+                // Optionally update UI or perform other actions upon successful ticket claim
+                console.log('Tickets claimed successfully');
+            } else {
+                console.error('Error claiming tickets:', result.message);
+                // Optionally handle error messages or UI updates upon failed ticket claim
             }
-        } else {
-            alert('No more tickets available!');
-            return;
+        } catch (error) {
+            console.error('Error updating tickets:', error);
+            // Handle fetch or network errors here
         }
+    } else {
+        alert('No more tickets available!');
+        return;
+    }
 
-        gameActive = true; // Set game as active
-        startScreen.style.display = 'none';
-        footer.style.display = 'none';
-        header.style.display = 'none';
-        startMusic();
-        initGame();
-        lastTimestamp = performance.now();
-        requestAnimationFrame(gameLoop);
-    });
+    // Proceed with game initialization or other actions after ticket claim
+    gameActive = true; // Set game as active
+    startScreen.style.display = 'none';
+    footer.style.display = 'none';
+    header.style.display = 'none';
+    startMusic();
+    initGame();
+    lastTimestamp = performance.now();
+    requestAnimationFrame(gameLoop);
+});
+
 
     tasksButton.addEventListener('click', () => {
         alert('Tasks: Coming Soon!');
