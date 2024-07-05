@@ -30,32 +30,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Set username or fallback to "Username"
     if (user) {
-        userInfo.textContent = user.username || `${user.first_name} ${user.last_name}`;
+        userInfo.textContent = user.username || ${user.first_name} ${user.last_name};
     } else {
         userInfo.textContent = 'Username';
     }
 
     let points = 0;
     let tickets = 0;
-    const updateLocalTickets = async () => {
-    try {
-        const response = await fetch(`/getUserData?username=${encodeURIComponent(userInfo.textContent)}`);
-        const data = await response.json();
-        if (data.success) {
-            tickets = data.tickets;
-            userTickets.textContent = tickets;
-        } else {
-            console.error('Failed to fetch user data:', data.error);
-        }
-    } catch (error) {
-        console.error('Error fetching user data:', error);
-    }
-};
 
     // Fetch initial user data (points and tickets)
     const fetchUserData = async () => {
         try {
-            const response = await fetch(`/getUserData?username=${encodeURIComponent(userInfo.textContent)}`);
+            const response = await fetch(/getUserData?username=${encodeURIComponent(userInfo.textContent)});
             const data = await response.json();
             if (data.success) {
                 points = data.points;
@@ -73,7 +59,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     fetchUserData();
 
     playButton.addEventListener('click', async () => {
-
         if (tickets > 0) {
             tickets--;
             userTickets.textContent = tickets;
@@ -309,10 +294,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         ctx.fillStyle = SHADOW_COLOR;
         ctx.font = 'bold 24px Arial';
         ctx.textAlign = 'center';
-        ctx.fillText(`SCORE: ${score}`, WIDTH / 2 + 2, 32);
+        ctx.fillText(SCORE: ${score}, WIDTH / 2 + 2, 32);
 
         ctx.fillStyle = SKY_BLUE;
-        ctx.fillText(`SCORE: ${score}`, WIDTH / 2, 30);
+        ctx.fillText(SCORE: ${score}, WIDTH / 2, 30);
 
         TILE_SPEED += SPEED_INCREMENT * deltaTime * 60; 
 
@@ -340,7 +325,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
         if (tg.initDataUnsafe?.user) {
-            userInfo.textContent = tg.initDataUnsafe.user.username || `${tg.initDataUnsafe.user.first_name} ${tg.initDataUnsafe.user.last_name}`;
+            userInfo.textContent = tg.initDataUnsafe.user.username || ${tg.initDataUnsafe.user.first_name} ${tg.initDataUnsafe.user.last_name};
         } else {
             userInfo.textContent = 'Username';
         }
@@ -354,7 +339,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         gameActive = false;
         await saveUser(userInfo.textContent, score);
-        const redirectURL = `transition.html?score=${score}`;
+        const redirectURL = transition.html?score=${score};
         window.location.replace(redirectURL);
     }
 
@@ -379,4 +364,4 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error('Error saving user:', error);
         }
     }
-});
+}); 
