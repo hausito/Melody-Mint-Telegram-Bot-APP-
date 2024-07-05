@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     };
     preloadImages();
-    let gameActive = false;
+
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const backgroundMusic = new Audio('background-music.mp3');
@@ -46,8 +46,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (data.success) {
                 points = data.points;
                 tickets = data.tickets;
-                userPoints.textContent = points;
-                userTickets.textContent = tickets;
+                userPoints.textContent = ` ${points}`;
+                userTickets.textContent = ` ${tickets}`;
             } else {
                 console.error('Failed to fetch user data:', data.error);
             }
@@ -58,48 +58,41 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     fetchUserData();
 
-playButton.addEventListener('click', async () => {
-    if (tickets > 0) {
-        try {
-            const response = await fetch('/claimTickets', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username: userInfo.textContent }),
-            });
+    playButton.addEventListener('click', async () => {
+        if (tickets > 0) {
+            tickets--;
+            userTickets.textContent = ` ${tickets}`;
 
-            const result = await response.json();
-            if (result.success) {
-                // Update local tickets count and UI
-                tickets = result.tickets;
-                userTickets.textContent = tickets;
+            // Update tickets on the server
+            try {
+                const response = await fetch('/updateTickets', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username: userInfo.textContent, tickets }),
+                });
 
-                // Proceed with game initialization
-                gameActive = true; // Set game as active
-                startScreen.style.display = 'none';
-                footer.style.display = 'none';
-                header.style.display = 'none';
-                startMusic();
-                initGame();
-                lastTimestamp = performance.now();
-                requestAnimationFrame(gameLoop);
-            } else {
-                console.error('Error claiming tickets:', result.message);
-                // Optionally handle UI updates or error messages here
-                alert('Error claiming tickets. Please try again later.');
+                const result = await response.json();
+                if (!result.success) {
+                    console.error('Error updating tickets:', result.error);
+                }
+            } catch (error) {
+                console.error('Error updating tickets:', error);
             }
-        } catch (error) {
-            console.error('Error updating tickets:', error);
-            // Handle fetch or network errors here
-            alert('Error claiming tickets. Please try again later.');
+        } else {
+            alert('No more tickets available!');
+            return;
         }
-    } else {
-        alert('No more tickets available!');
-        return;
-    }
-});
 
+        startScreen.style.display = 'none';
+        footer.style.display = 'none';
+        header.style.display = 'none'; 
+        startMusic();
+        initGame();
+        lastTimestamp = performance.now();
+        requestAnimationFrame(gameLoop);
+    });
 
     tasksButton.addEventListener('click', () => {
         alert('Tasks: Coming Soon!');
@@ -195,29 +188,29 @@ playButton.addEventListener('click', async () => {
         return /Mobi|Android/i.test(navigator.userAgent);
     }
 
-    function addNewTile() {
-        const attempts = 100;
-        const lastColumn = tiles.length > 0 ? Math.floor(tiles[tiles.length - 1].x / (TILE_WIDTH + SEPARATOR)) : -1;
+function addNewTile() {
+    const attempts = 100;
+    const lastColumn = tiles.length > 0 ? Math.floor(tiles[tiles.length - 1].x / (TILE_WIDTH + SEPARATOR)) : -1;
 
-        for (let i = 0; i < attempts; i++) {
-            let newColumn;
-            do {
-                newColumn = Math.floor(Math.random() * COLUMNS);
-            } while (newColumn === lastColumn);
+    for (let i = 0; i < attempts; i++) {
+        let newColumn;
+        do {
+            newColumn = Math.floor(Math.random() * COLUMNS);
+        } while (newColumn === lastColumn);
 
-            const newTileX = newColumn * (TILE_WIDTH + SEPARATOR);
-            const newTileY = Math.min(...tiles.map(tile => tile.y)) - TILE_HEIGHT - VERTICAL_GAP;
+        const newTileX = newColumn * (TILE_WIDTH + SEPARATOR);
+        const newTileY = Math.min(...tiles.map(tile => tile.y)) - TILE_HEIGHT - VERTICAL_GAP;
 
-            if (!tiles.some(tile => {
-                const rect = { x: newTileX, y: newTileY, width: TILE_WIDTH, height: TILE_HEIGHT };
-                return tile.y < rect.y + rect.height && tile.y + tile.height > rect.y &&
-                    tile.x < rect.x + rect.width && tile.x + tile.width > rect.x;
-            })) {
-                tiles.push(new Tile(newTileX, newTileY));
-                break;
-            }
+        if (!tiles.some(tile => {
+            const rect = { x: newTileX, y: newTileY, width: TILE_WIDTH, height: TILE_HEIGHT };
+            return tile.y < rect.y + rect.height && tile.y + tile.height > rect.y &&
+                tile.x < rect.x + rect.width && tile.x + tile.width > rect.x;
+        })) {
+            tiles.push(new Tile(newTileX, newTileY));
+            break;
         }
     }
+}
 
 
     function handleClick(event) {
@@ -260,14 +253,14 @@ playButton.addEventListener('click', async () => {
     function gameLoop(timestamp) {
         if (!gameRunning) return;
 
-        const deltaTime = (timestamp - lastTimestamp) / 1000;
+        const deltaTime = (timestamp - lastTimestamp) / 1000; 
         lastTimestamp = timestamp;
 
         ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
         let outOfBounds = false;
         tiles.forEach(tile => {
-            tile.move(TILE_SPEED * deltaTime * 60);
+            tile.move(TILE_SPEED * deltaTime * 60); 
             tile.updateOpacity();
             if (tile.isOutOfBounds()) {
                 outOfBounds = true;
@@ -306,7 +299,7 @@ playButton.addEventListener('click', async () => {
         ctx.fillStyle = SKY_BLUE;
         ctx.fillText(`SCORE: ${score}`, WIDTH / 2, 30);
 
-        TILE_SPEED += SPEED_INCREMENT * deltaTime * 60;
+        TILE_SPEED += SPEED_INCREMENT * deltaTime * 60; 
 
         requestAnimationFrame(gameLoop);
     }
@@ -342,10 +335,6 @@ playButton.addEventListener('click', async () => {
     });
 
     async function gameOver() {
-        if (!gameActive) return;
-
-        gameActive = false;
-        // Only save the user if the game was active
         await saveUser(userInfo.textContent, score);
         const redirectURL = `transition.html?score=${score}`;
         window.location.replace(redirectURL);
@@ -363,10 +352,8 @@ playButton.addEventListener('click', async () => {
 
             const result = await response.json();
             if (result.success) {
-                points = result.data.points;
-                userPoints.textContent = points;
-                tickets = result.data.tickets; // Update tickets from server response
-                userTickets.textContent = tickets; // Update UI with updated tickets
+                points = result.data.points; 
+                userPoints.textContent = `Points: ${points}`; 
             } else {
                 console.error('Error saving user:', result.error);
             }
