@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let points = 0;
     let tickets = 0;
 
-    // Fetch initial user data (points and tickets)
+       // Fetch initial user data (points and tickets)
     const fetchUserData = async () => {
         try {
             const response = await fetch(`/getUserData?username=${encodeURIComponent(userInfo.textContent)}`);
@@ -58,10 +58,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     fetchUserData();
 
+    // Update local tickets when claimed in main.js
+    document.addEventListener('ticketsUpdated', (event) => {
+        tickets = event.detail.tickets;
+        userTickets.textContent = `Tickets: ${tickets}`;
+    });
+
     playButton.addEventListener('click', async () => {
         if (tickets > 0) {
             tickets--;
-            userTickets.textContent = tickets;
+            userTickets.textContent = `Tickets: ${tickets}`;
 
             // Update tickets on the server
             try {
@@ -93,6 +99,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         lastTimestamp = performance.now();
         requestAnimationFrame(gameLoop);
     });
+
 
     tasksButton.addEventListener('click', () => {
         alert('Tasks: Coming Soon!');
