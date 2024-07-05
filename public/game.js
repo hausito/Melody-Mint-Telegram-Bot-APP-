@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     playButton.addEventListener('click', async () => {
         if (tickets > 0) {
             tickets--;
-            userTickets.textContent = `Tickets: ${tickets}`;
+
 
             // Update tickets on the server
             try {
@@ -98,6 +98,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         initGame();
         lastTimestamp = performance.now();
         requestAnimationFrame(gameLoop);
+        userTickets.textContent = `${tickets}`;
     });
 
 
