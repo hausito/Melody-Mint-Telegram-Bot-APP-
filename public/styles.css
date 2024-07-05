@@ -188,7 +188,7 @@ canvas {
     position: fixed; /* Stay in place */
     z-index: 1; /* Sit on top */
     left: 0;
-    bottom: 0;
+    bottom: 10%;
     width: 100%; /* Full width */
     height: 50%; /* Half height */
     background-color: rgba(0, 0, 0, 0.5); /* Black background with opacity */
