@@ -37,6 +37,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     let points = 0;
     let tickets = 0;
+    const updateLocalTickets = async () => {
+    try {
+        const response = await fetch(`/getUserData?username=${encodeURIComponent(userInfo.textContent)}`);
+        const data = await response.json();
+        if (data.success) {
+            tickets = data.tickets;
+            userTickets.textContent = tickets;
+        } else {
+            console.error('Failed to fetch user data:', data.error);
+        }
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+    }
+};
 
     // Fetch initial user data (points and tickets)
     const fetchUserData = async () => {
