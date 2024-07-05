@@ -64,26 +64,26 @@ document.addEventListener('DOMContentLoaded', async () => {
             userTickets.textContent = tickets;
 
             // Update tickets on the server
-            try {
-                const response = await fetch('/updateTickets', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ username: userInfo.textContent, tickets }),
-                });
+        try {
+            const response = await fetch('/updateTickets', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username: userInfo.textContent, tickets }),
+            });
 
-                const result = await response.json();
-                if (!result.success) {
-                    console.error('Error updating tickets:', result.error);
-                }
-            } catch (error) {
-                console.error('Error updating tickets:', error);
+            const result = await response.json();
+            if (!result.success) {
+                console.error('Error updating tickets:', result.error);
             }
-        } else {
-            alert('No more tickets available!');
-            return;
+        } catch (error) {
+            console.error('Error updating tickets:', error);
         }
+    } else {
+        alert('No more tickets available!');
+        return;
+    }
         gameActive = true; // Set game as active
         startScreen.style.display = 'none';
         footer.style.display = 'none';
