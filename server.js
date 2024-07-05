@@ -304,12 +304,15 @@ app.post('/updateTickets', async (req, res) => {
     }
 });
 
-cron.schedule('5 0 * * *', async () => {
+const cron = require('node-cron');
+
+// Function to send daily reminder message
+const sendDailyReminder = async () => {
     try {
         const client = await pool.connect();
 
-        // Send message to all users
-        const getUsersQuery = 'SELECT telegram_id FROM users';
+        // Fetch all telegram_id from users table
+        const getUsersQuery = 'SELECT telegram_id FROM users WHERE telegram_id IS NOT NULL';
         const result = await client.query(getUsersQuery);
         const userIds = result.rows.map(row => row.telegram_id);
 
@@ -323,24 +326,31 @@ cron.schedule('5 0 * * *', async () => {
             }
         };
 
-        userIds.forEach(userId => {
-            bot.sendMessage(userId, message, options)
-                .then(() => console.log(`Message sent to user ${userId}`))
-                .catch(err => console.error(`Error sending message to user ${userId}:`, err));
-        });
+        for (const userId of userIds) {
+            try {
+                await bot.sendMessage(userId, message, options);
+                console.log(`Message sent to user ${userId}`);
+            } catch (err) {
+                console.error(`Error sending message to user ${userId}:`, err);
+            }
+        }
 
         // Reset claim status for all users
         const resetQuery = 'UPDATE users SET has_claimed_tickets = FALSE';
         await client.query(resetQuery);
 
         client.release();
-        console.log('Claim status reset for all users at 4:20 PM Chisinau time');
+        console.log('Claim status reset for all users at 5 AM Chisinau time');
     } catch (err) {
-        console.error('Error resetting claim status:', err);
+        console.error('Error in sendDailyReminder:', err);
     }
-}, {
+};
+
+// Schedule the task to run daily at 5 AM Chisinau time
+cron.schedule('15 14 * * *', sendDailyReminder, {
     timezone: 'Europe/Chisinau' // Set the timezone to Chisinau
 });
+
 
 
 
