@@ -58,44 +58,41 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     fetchUserData();
 
-  playButton.addEventListener('click', async () => {
-    if (tickets > 0) {
-        tickets--;
-        userTickets.textContent = tickets;
+    playButton.addEventListener('click', async () => {
+        if (tickets > 0) {
+            tickets--;
+            userTickets.textContent = tickets;
 
-        // Update tickets on the server
-        try {
-            const response = await fetch('/updateTickets', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username: userInfo.textContent, tickets }),
-            });
+            // Update tickets on the server
+            try {
+                const response = await fetch('/updateTickets', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username: userInfo.textContent, tickets }),
+                });
 
-            const result = await response.json();
-            if (!result.success) {
-                console.error('Error updating tickets:', result.error);
+                const result = await response.json();
+                if (!result.success) {
+                    console.error('Error updating tickets:', result.error);
+                }
+            } catch (error) {
+                console.error('Error updating tickets:', error);
             }
-        } catch (error) {
-            console.error('Error updating tickets:', error);
+        } else {
+            alert('No more tickets available!');
+            return;
         }
-
-        // Proceed with starting the game
-        gameActive = true;
+        gameActive = true; // Set game as active
         startScreen.style.display = 'none';
         footer.style.display = 'none';
-        header.style.display = 'none';
+        header.style.display = 'none'; 
         startMusic();
         initGame();
         lastTimestamp = performance.now();
         requestAnimationFrame(gameLoop);
-    } else {
-        alert('No more tickets available!');
-        return;
-    }
-});
-
+    });
 
     tasksButton.addEventListener('click', () => {
         alert('Tasks: Coming Soon!');
