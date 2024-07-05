@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     };
     preloadImages();
-
+    let gameActive = false;
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const backgroundMusic = new Audio('background-music.mp3');
@@ -46,8 +46,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (data.success) {
                 points = data.points;
                 tickets = data.tickets;
-                userPoints.textContent = ` ${points}`;
-                userTickets.textContent = ` ${tickets}`;
+                userPoints.textContent = points;
+                userTickets.textContent = tickets;
             } else {
                 console.error('Failed to fetch user data:', data.error);
             }
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     playButton.addEventListener('click', async () => {
         if (tickets > 0) {
             tickets--;
-            userTickets.textContent = ` ${tickets}`;
+            userTickets.textContent = tickets;
 
             // Update tickets on the server
             try {
@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             alert('No more tickets available!');
             return;
         }
-
+        gameActive = true; // Set game as active
         startScreen.style.display = 'none';
         footer.style.display = 'none';
         header.style.display = 'none'; 
@@ -188,29 +188,29 @@ document.addEventListener('DOMContentLoaded', async () => {
         return /Mobi|Android/i.test(navigator.userAgent);
     }
 
-function addNewTile() {
-    const attempts = 100;
-    const lastColumn = tiles.length > 0 ? Math.floor(tiles[tiles.length - 1].x / (TILE_WIDTH + SEPARATOR)) : -1;
+    function addNewTile() {
+        const attempts = 100;
+        const lastColumn = tiles.length > 0 ? Math.floor(tiles[tiles.length - 1].x / (TILE_WIDTH + SEPARATOR)) : -1;
 
-    for (let i = 0; i < attempts; i++) {
-        let newColumn;
-        do {
-            newColumn = Math.floor(Math.random() * COLUMNS);
-        } while (newColumn === lastColumn);
+        for (let i = 0; i < attempts; i++) {
+            let newColumn;
+            do {
+                newColumn = Math.floor(Math.random() * COLUMNS);
+            } while (newColumn === lastColumn);
 
-        const newTileX = newColumn * (TILE_WIDTH + SEPARATOR);
-        const newTileY = Math.min(...tiles.map(tile => tile.y)) - TILE_HEIGHT - VERTICAL_GAP;
+            const newTileX = newColumn * (TILE_WIDTH + SEPARATOR);
+            const newTileY = Math.min(...tiles.map(tile => tile.y)) - TILE_HEIGHT - VERTICAL_GAP;
 
-        if (!tiles.some(tile => {
-            const rect = { x: newTileX, y: newTileY, width: TILE_WIDTH, height: TILE_HEIGHT };
-            return tile.y < rect.y + rect.height && tile.y + tile.height > rect.y &&
-                tile.x < rect.x + rect.width && tile.x + tile.width > rect.x;
-        })) {
-            tiles.push(new Tile(newTileX, newTileY));
-            break;
+            if (!tiles.some(tile => {
+                const rect = { x: newTileX, y: newTileY, width: TILE_WIDTH, height: TILE_HEIGHT };
+                return tile.y < rect.y + rect.height && tile.y + tile.height > rect.y &&
+                    tile.x < rect.x + rect.width && tile.x + tile.width > rect.x;
+            })) {
+                tiles.push(new Tile(newTileX, newTileY));
+                break;
+            }
         }
     }
-}
 
 
     function handleClick(event) {
@@ -316,7 +316,7 @@ function addNewTile() {
             document.body.style.backgroundColor = themeParams.bg_color;
         }
     });
- 
+
     tg.ready().then(function() {
         if (tg.themeParams) {
             const themeParams = tg.themeParams;
@@ -335,6 +335,9 @@ function addNewTile() {
     });
 
     async function gameOver() {
+        if (!gameActive) return;
+        
+        gameActive = false;
         await saveUser(userInfo.textContent, score);
         const redirectURL = `transition.html?score=${score}`;
         window.location.replace(redirectURL);
@@ -353,7 +356,7 @@ function addNewTile() {
             const result = await response.json();
             if (result.success) {
                 points = result.data.points; 
-                userPoints.textContent = `Points: ${points}`; 
+                userPoints.textContent = points; 
             } else {
                 console.error('Error saving user:', result.error);
             }
