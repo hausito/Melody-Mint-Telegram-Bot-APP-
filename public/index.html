@@ -38,13 +38,19 @@
                 <img src="icons/media-step-forward-128.png" alt="Forward">
             </div>
 
-            <div id="claimPopup" class="popup">
+            <!-- Popup initially hidden -->
+            <div id="claimPopup" class="popup" style="display: none;">
                 <div class="popup-content">
                     <span class="close" onclick="closePopup()">&times;</span>
                     <h2>Claim Your Tickets</h2>
                     <p>Click the button below to claim your daily tickets.</p>
                     <button onclick="claimTickets()">Claim Tickets</button>
                 </div>
+            </div>
+
+            <!-- Loading spinner initially shown -->
+            <div id="loadingSpinner" style="display: block;">
+                <div class="spinner">Loading...</div>
             </div>
         </div>
 
