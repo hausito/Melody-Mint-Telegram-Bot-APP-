@@ -13,7 +13,7 @@ body {
     color: #333;
 }
 
-/*Disable Copy text*/
+/* Disable Copy text */
 body {
     -webkit-user-select: none; /* Safari */
     -moz-user-select: none; /* Firefox */
@@ -21,6 +21,7 @@ body {
     user-select: none; /* Non-prefixed version, currently supported by Chrome, Opera and Edge */
     -webkit-touch-callout: none; /* iOS Safari */
 }
+
 body.loading #gameContainer {
     display: none;
 }
@@ -69,13 +70,13 @@ body.loading {
     z-index: -1;
 }
 
-.custom_purple{
+.custom_purple {
     background-color: #9A20AA;
 }
-.custom_blue{
+
+.custom_blue {
     background-color: #1788B3;
 }
-
 
 #gameContainer {
     flex-grow: 1;
@@ -95,10 +96,12 @@ canvas {
     background-color: transparent;
     box-shadow: 0 0 20px #00ffcc, 0 0 30px #00ffcc, 0 0 40px #00ffcc, 0 0 50px #00ffcc; /* Neon glow effect */
 }
+
 .tile {
     position: absolute;
     box-shadow: 0 0 20px #00ffcc, 0 0 30px #00ffcc, 0 0 40px #00ffcc, 0 0 50px #00ffcc;
 }
+
 #header {
     position: fixed;
     top: 0;
@@ -131,18 +134,19 @@ canvas {
     justify-content: center;
     align-items: center;
 }
+
 .progress-bar {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 5px; /* Ajustează înălțimea după cum dorești */
+    height: 5px; /* Adjust height as needed */
     background-color: white;
 }
 
 .controls {
     position: absolute;
-    top: 45.5vh; /* Ajustează pentru a seta poziția sub bara de progres */
+    top: 45.5vh; /* Adjust to set position below the progress bar */
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -151,16 +155,15 @@ canvas {
 }
 
 .controls img {
-    width: 2.5vh; /* Dimensiunea pentru butoanele backward și forward */
-    margin: 0 1.8vh; /* Spațiere între butoane */
+    width: 2.5vh; /* Size for backward and forward buttons */
+    margin: 0 1.8vh; /* Spacing between buttons */
 }
 
 .controls img.play {
-    width: 5vh; /* Dimensiunea pentru butonul play */
+    width: 5vh; /* Size for play button */
 }
 
-.icons
-{
+.icons {
     width: 4vh;
     height: 4vh;
 }
@@ -291,10 +294,6 @@ canvas {
     align-items: center;
 }
 
-/* Rest of your CSS */
-/* Rest of your CSS */
-
-
 .popup-content {
     background-color: #222; /* Dark background */
     padding: 20px;
@@ -341,18 +340,4 @@ canvas {
 
 .popup-content .close:hover {
     color: #fff; /* White on hover */
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
 }
