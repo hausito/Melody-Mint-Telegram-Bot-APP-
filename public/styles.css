@@ -236,25 +236,70 @@ canvas {
     cursor: pointer;
 }
 
+/* Neon glow effect */
+.neon-glow {
+    box-shadow: 0 0 20px #00ffcc, 0 0 30px #00ffcc, 0 0 40px #00ffcc, 0 0 50px #00ffcc;
+}
+
 .popup {
-    display: none; /* Hidden by default */
+    display: flex; /* Changed from 'none' to 'flex' */
     position: fixed; /* Stay in place */
     z-index: 1; /* Sit on top */
     left: 0;
-    bottom: 10%;
+    bottom: 0;
     width: 100%; /* Full width */
-    height: 50%; /* Half height */
-    background-color: rgba(0, 0, 0, 0.5); /* Black background with opacity */
+    height: 100%; /* Full height */
+    background-color: rgba(0, 0, 0, 0.8); /* Black background with opacity */
+    justify-content: center;
+    align-items: center;
 }
 
 .popup-content {
-    position: absolute;
-    bottom: 0;
-    background-color: #fefefe;
-    width: 100%;
+    background-color: #222; /* Dark background */
     padding: 20px;
-    border-radius: 20px 20px 0 0; /* Rounded corners on top */
+    border-radius: 20px;
     text-align: center;
+    position: relative;
+}
+
+.popup-content h2 {
+    color: #fff; /* White text */
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.popup-content p {
+    color: #ccc; /* Light text */
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+
+.popup-content button {
+    background-color: #9A20AA; /* Purple button */
+    color: #fff;
+    font-size: 1.2rem;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.popup-content button:hover {
+    background-color: #6b0d70; /* Darker purple on hover */
+}
+
+.popup-content .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #ccc;
+    font-size: 1.6rem;
+    cursor: pointer;
+}
+
+.popup-content .close:hover {
+    color: #fff; /* White on hover */
 }
 
 .close {
