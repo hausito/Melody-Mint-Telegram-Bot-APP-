@@ -1,8 +1,12 @@
 document.addEventListener('DOMContentLoaded', async () => {
     if (window.Telegram && window.Telegram.WebApp) {
         window.Telegram.WebApp.expand();
+        await checkTicketClaimStatus();
+    } else {
+        await checkTicketClaimStatus();
     }
-    await checkTicketClaimStatus();
+    // Remove loading class after checks
+    document.body.classList.remove('loading');
 });
 
 async function checkTicketClaimStatus() {
@@ -20,7 +24,9 @@ async function checkTicketClaimStatus() {
             pointsInfo.textContent = `${data.points}`;
 
             if (!data.has_claimed_tickets) {
-                document.getElementById('claimPopup').style.display = 'flex';
+                document.getElementById('claimPopup').style.display = 'block';
+            } else {
+                document.getElementById('claimPopup').style.display = 'none';
             }
         } else {
             console.error('Failed to fetch user data:', data.error);
@@ -57,7 +63,6 @@ async function claimTickets() {
         alert('Failed to claim tickets. Please try again later.');
     }
 }
-
 
 async function showReferralLink() {
     const userInfo = document.getElementById('userInfo').textContent;
