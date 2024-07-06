@@ -23,9 +23,7 @@ async function checkTicketClaimStatus() {
             document.getElementById('loadingSpinner').style.display = 'none';
 
             if (!data.has_claimed_tickets) {
-                document.getElementById('claimPopup').style.display = 'block';
-            } else {
-                document.getElementById('claimPopup').style.display = 'none';
+                document.getElementById('claimPopup').classList.remove('hidden');
             }
         } else {
             console.error('Failed to fetch user data:', data.error);
@@ -48,13 +46,13 @@ async function claimTickets() {
         if (data.success) {
             alert('Tickets claimed successfully!');
             document.getElementById('ticketsInfo').textContent = `${data.tickets}`;
-            document.getElementById('claimPopup').style.display = 'none';
+            document.getElementById('claimPopup').classList.add('hidden');
             
             const event = new CustomEvent('ticketsUpdated', { detail: { tickets: data.tickets } });
             document.dispatchEvent(event);
         } else {
             alert(data.message);
-            document.getElementById('claimPopup').style.display = 'none';
+            document.getElementById('claimPopup').classList.add('hidden');
         }
     } catch (error) {
         console.error('Error claiming tickets:', error);
