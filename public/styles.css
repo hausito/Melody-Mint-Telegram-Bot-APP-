@@ -10,7 +10,7 @@ body {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    color: #a28089;
+    color: #333;
 }
 
 /*Disable Copy text*/
@@ -31,10 +31,7 @@ body {
     object-fit: cover;
     z-index: -1;
 }
-.tile {
-    position: absolute;
-    box-shadow: 0 0 20px #00ffcc, 0 0 30px #00ffcc, 0 0 40px #00ffcc, 0 0 50px #00ffcc;
-}
+
 .custom_purple{
     background-color: #9A20AA;
 }
@@ -46,23 +43,19 @@ body {
 #gameContainer {
     flex-grow: 1;
     width: 100vw;
-    height: 100vh; 
     margin: 0;
     border: none;
     background-color: transparent;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-
-}
 }
 
 canvas {
     display: block;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7); /* Semi-transparent background for the canvas */
-    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5), 0 0 30px rgba(255, 0, 255, 0.4);
+    background-color: transparent;
 }
 
 #header {
