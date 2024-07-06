@@ -3,6 +3,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.Telegram.WebApp.expand();
     }
 
+    const claimPopup = document.getElementById('claimPopup');
+    claimPopup.style.display = 'none'; // Ensure the popup is hidden initially
+
     await checkTicketClaimStatus();
 });
 
@@ -25,10 +28,8 @@ async function checkTicketClaimStatus() {
 
             if (!data.has_claimed_tickets) {
                 claimPopup.style.display = 'block';
-                localStorage.setItem('has_claimed_tickets', 'false');
             } else {
                 claimPopup.style.display = 'none';
-                localStorage.setItem('has_claimed_tickets', 'true');
             }
         } else {
             console.error('Failed to fetch user data:', data.error);
@@ -52,7 +53,6 @@ async function claimTickets() {
             alert('Tickets claimed successfully!');
             document.getElementById('ticketsInfo').textContent = `${data.tickets}`;
             document.getElementById('claimPopup').style.display = 'none';
-            localStorage.setItem('has_claimed_tickets', 'true'); // Store claim status
 
             // Trigger event to update tickets in game.js
             const event = new CustomEvent('ticketsUpdated', { detail: { tickets: data.tickets } });
