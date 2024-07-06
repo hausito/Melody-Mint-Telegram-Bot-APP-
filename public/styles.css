@@ -21,6 +21,7 @@ body {
     user-select: none; /* Non-prefixed version, currently supported by Chrome, Opera and Edge */
     -webkit-touch-callout: none; /* iOS Safari */
 }
+/* Loading state */
 body.loading #gameContainer {
     display: none;
 }
