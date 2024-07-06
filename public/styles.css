@@ -56,8 +56,12 @@ canvas {
     width: 100%;
     height: 100%;
     background-color: transparent;
+    box-shadow: 0 0 20px #00ffcc, 0 0 30px #00ffcc, 0 0 40px #00ffcc, 0 0 50px #00ffcc; /* Neon glow effect */
 }
-
+.tile {
+    position: absolute;
+    box-shadow: 0 0 20px #00ffcc, 0 0 30px #00ffcc, 0 0 40px #00ffcc, 0 0 50px #00ffcc;
+}
 #header {
     position: fixed;
     top: 0;
