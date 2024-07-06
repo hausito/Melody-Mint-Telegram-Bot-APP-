@@ -2,8 +2,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (window.Telegram && window.Telegram.WebApp) {
         window.Telegram.WebApp.expand();
         await checkTicketClaimStatus();
+    } else {
+        await checkTicketClaimStatus();
     }
-    await checkTicketClaimStatus();
+    // Remove loading class after checks
+    document.body.classList.remove('loading');
 });
 
 async function checkTicketClaimStatus() {
@@ -61,52 +64,52 @@ async function claimTickets() {
     }
 }
 
-        async function showReferralLink() {
-            const userInfo = document.getElementById('userInfo').textContent;
-            try {
-                const response = await fetch(`/getReferralLink?username=${encodeURIComponent(userInfo)}`);
-                const data = await response.json();
+async function showReferralLink() {
+    const userInfo = document.getElementById('userInfo').textContent;
+    try {
+        const response = await fetch(`/getReferralLink?username=${encodeURIComponent(userInfo)}`);
+        const data = await response.json();
 
-                if (data.success) {
-                    const referralLink = `https://t.me/melodymint_bot?start=${data.authCode}`;
+        if (data.success) {
+            const referralLink = `https://t.me/melodymint_bot?start=${data.authCode}`;
 
-                    // Display modal with referral link
-                    const modal = document.getElementById('myModal');
-                    const modalContent = document.getElementById('modalContent');
-                    const friendsInvited = document.getElementById('friendsInvited');
-                    modal.style.display = 'block';
-                    modalContent.textContent = referralLink;
-
-                    // Automatically copy to clipboard for mobile
-                    const dummyInput = document.createElement('input');
-                    document.body.appendChild(dummyInput);
-                    dummyInput.value = referralLink;
-                    dummyInput.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(dummyInput);
-
-                    // Display number of friends invited
-                    friendsInvited.textContent = `Friends invited: ${data.friendsInvited}`;
-                } else {
-                    console.error('Failed to fetch referral link:', data.error);
-                }
-            } catch (error) {
-                console.error('Error fetching referral link:', error);
-            }
-        }
-
-        function closeModal() {
+            // Display modal with referral link
             const modal = document.getElementById('myModal');
-            modal.style.display = 'none';
-        }
+            const modalContent = document.getElementById('modalContent');
+            const friendsInvited = document.getElementById('friendsInvited');
+            modal.style.display = 'block';
+            modalContent.textContent = referralLink;
 
-        function copyToClipboard() {
-            const referralLink = document.getElementById('modalContent').textContent;
+            // Automatically copy to clipboard for mobile
             const dummyInput = document.createElement('input');
             document.body.appendChild(dummyInput);
             dummyInput.value = referralLink;
             dummyInput.select();
             document.execCommand('copy');
             document.body.removeChild(dummyInput);
-            alert('Referral link copied to clipboard!');
+
+            // Display number of friends invited
+            friendsInvited.textContent = `Friends invited: ${data.friendsInvited}`;
+        } else {
+            console.error('Failed to fetch referral link:', data.error);
         }
+    } catch (error) {
+        console.error('Error fetching referral link:', error);
+    }
+}
+
+function closeModal() {
+    const modal = document.getElementById('myModal');
+    modal.style.display = 'none';
+}
+
+function copyToClipboard() {
+    const referralLink = document.getElementById('modalContent').textContent;
+    const dummyInput = document.createElement('input');
+    document.body.appendChild(dummyInput);
+    dummyInput.value = referralLink;
+    dummyInput.select();
+    document.execCommand('copy');
+    document.body.removeChild(dummyInput);
+    alert('Referral link copied to clipboard!');
+}
