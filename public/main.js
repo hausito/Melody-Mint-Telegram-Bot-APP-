@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         await checkTicketClaimStatus();
     }
     await checkTicketClaimStatus();
+        document.body.classList.remove('loading');
 });
 
 async function checkTicketClaimStatus() {
