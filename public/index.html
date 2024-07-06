@@ -1,84 +1,109 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Melody Mint</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>    
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="main.js" defer></script>
-    <script src="game.js" defer></script>
-</head>
-<body>
-    <div id="gameContainer">
-        <canvas id="gameCanvas" width="360" height="640"></canvas>
-        <div id="header">
-            <div id="topHalf">
-                <img src="background.jpeg" alt="Background Image" class="background-image">  
-                <div class="absolute top-2 left-2 flex items-center space-x-2">
-                    <img src="icons/ticket-128.png" alt="Tickets" class="icons">
-                    <span id="ticketsInfo" class="text-custom text-xl font-bold text-white">5</span>
-                </div>
-                <div id="userInfo" class="text-custom text-xl font-bold text-white">@username</div>
-                <div id="inviteButton" onclick="showReferralLink()" class="absolute top-2 right-2 p-2 cursor-pointer">
-                    <img src="icons/add-user-2-128.png" alt="Invite Friends" class="icons"> 
-                </div>
-                <div class="coin-container mb-3">
-                    <span id="points" class="text-2xl text-white font-bold text-center">6000</span>
-                </div>
-            </div>
-            <div class="progress-bar"></div>
-            <div class="controls">
-                <img src="icons/media-step-backward-128.png" alt="Backward">
-                <img src="icons/play-3-128.png" alt="Play" class="play">
-                <img src="icons/media-step-forward-128.png" alt="Forward">
-            </div>
-            <div id="claimPopup" class="popup">
-                <div class="popup-content">
-                    <span class="close" onclick="closePopup()">&times;</span>
-                    <h2>Claim Your Tickets</h2>
-                    <p>Click the button below to claim your daily tickets.</p>
-                    <button onclick="claimTickets()">Claim Tickets</button>
-                </div>
-            </div>
-        </div>
-        <div id="startScreen">
-            <div id="newLayout" class="bg-white rounded-lg p-4 shadow-lg">
-                <div class="buttons-container mb-8">
-                    <button id="playButton" class="button-custom custom_purple text-white text-xl py-3 rounded-lg shadow-inner-custom-button">
-                        Earn Coins
-                    </button>
-                    <button id="tasksButton" class="button-custom custom_blue text-white text-xl py-3 rounded-lg shadow-inner-custom-button">
-                        Tasks
-                    </button>
-                    <button id="upgradeButton" class="button-custom custom_purple text-white text-xl py-3 rounded-lg shadow-inner-custom-button">
-                        Upgrade
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <p id="modalContent">Referral Link: <span id="referralLink"></span></p>
-            <button onclick="copyToClipboard()">Copy to Clipboard</button>
-            <p id="friendsInvited">Friends Invited: <span id="friendsCount"></span></p>
-            <button onclick="closeModal()">Close</button>
-        </div>
-    </div>
-    <audio id="backgroundMusic" src="background-music.mp3" loop></audio>
-    <div id="footer">
-        <button class="footer-button custom_purple" onclick="window.location.href='index.html'">
-            <img src="icons/home-5-128.png" alt="Home">
-        </button>
-        <button class="footer-button custom_blue" onclick="window.location.href='leaderboard.html'">
-            <img src="icons/trophy-2-128.png" alt="Tasks">
-        </button>
-        <button class="footer-button custom_purple" onclick="window.location.href='airdrop.html'">
-            <img src="icons/package-2-128.png" alt="Airdrop">
-        </button>
-    </div>
-</body>
-</html>
+document.addEventListener('DOMContentLoaded', async () => {
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.expand();
+                await checkTicketClaimStatus();
+            }
+            await checkTicketClaimStatus();
+        });
+    async function checkTicketClaimStatus() {
+    const userInfo = document.getElementById('userInfo').textContent;
+    try {
+        const response = await fetch(`/getUserData?username=${encodeURIComponent(userInfo)}`);
+        const data = await response.json();
+        console.log('User data received:', data);
+
+        if (data.success) {
+            const ticketsInfo = document.getElementById('ticketsInfo');
+            ticketsInfo.textContent = `Tickets: ${data.tickets}`;
+
+            const pointsInfo = document.getElementById('points');  // Update points display
+            pointsInfo.textContent = `Points: ${data.points}`;
+
+            if (!data.has_claimed_tickets) {
+                document.getElementById('claimPopup').style.display = 'block';
+            } else {
+                document.getElementById('claimPopup').style.display = 'none';
+            }
+        } else {
+            console.error('Failed to fetch user data:', data.error);
+        }
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+    }
+}
+
+
+        async function claimTickets() {
+            const userInfo = document.getElementById('userInfo').textContent;
+            try {
+                const response = await fetch('/claimTickets', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: userInfo })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Tickets claimed successfully!');
+                    document.getElementById('ticketsInfo').textContent = `Tickets: ${data.tickets}`;
+                    document.getElementById('claimPopup').style.display = 'none';
+                } else {
+                    alert(data.message);
+                    document.getElementById('claimPopup').style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error claiming tickets:', error);
+                alert('Failed to claim tickets. Please try again later.');
+            }
+        }
+
+
+        async function showReferralLink() {
+            const userInfo = document.getElementById('userInfo').textContent;
+            try {
+                const response = await fetch(`/getReferralLink?username=${encodeURIComponent(userInfo)}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const referralLink = `https://t.me/melodymint_bot?start=${data.authCode}`;
+
+                    // Display modal with referral link
+                    const modal = document.getElementById('myModal');
+                    const modalContent = document.getElementById('modalContent');
+                    const friendsInvited = document.getElementById('friendsInvited');
+                    modal.style.display = 'block';
+                    modalContent.textContent = referralLink;
+
+                    // Automatically copy to clipboard for mobile
+                    const dummyInput = document.createElement('input');
+                    document.body.appendChild(dummyInput);
+                    dummyInput.value = referralLink;
+                    dummyInput.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(dummyInput);
+
+                    // Display number of friends invited
+                    friendsInvited.textContent = `Friends invited: ${data.friendsInvited}`;
+                } else {
+                    console.error('Failed to fetch referral link:', data.error);
+                }
+            } catch (error) {
+                console.error('Error fetching referral link:', error);
+            }
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('myModal');
+            modal.style.display = 'none';
+        }
+
+        function copyToClipboard() {
+            const referralLink = document.getElementById('modalContent').textContent;
+            const dummyInput = document.createElement('input');
+            document.body.appendChild(dummyInput);
+            dummyInput.value = referralLink;
+            dummyInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummyInput);
+            alert('Referral link copied to clipboard!');
+        }
