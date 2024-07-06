@@ -23,8 +23,8 @@ async function checkTicketClaimStatus() {
             document.getElementById('loadingSpinner').style.display = 'none';
 
             if (!data.has_claimed_tickets) {
-                // Remove the 'hidden' class to show the popup
                 document.getElementById('claimPopup').classList.remove('hidden');
+                document.getElementById('claimPopup').style.display = 'flex'; // Ensure the popup is shown
             }
         } else {
             console.error('Failed to fetch user data:', data.error);
@@ -34,32 +34,30 @@ async function checkTicketClaimStatus() {
     }
 }
 
-
 async function claimTickets() {
     const userInfo = document.getElementById('userInfo').textContent;
     try {
         const response = await fetch('/claimTickets', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username: userInfo })
+            body: JSON.stringify({ username: userInfo }),
         });
         const data = await response.json();
 
         if (data.success) {
-            alert('Tickets claimed successfully!');
-            document.getElementById('ticketsInfo').textContent = `${data.tickets}`;
-            document.getElementById('claimPopup').classList.add('hidden');
-            
-            const event = new CustomEvent('ticketsUpdated', { detail: { tickets: data.tickets } });
-            document.dispatchEvent(event);
+            const ticketsInfo = document.getElementById('ticketsInfo');
+            ticketsInfo.textContent = `${data.tickets}`;
+            closePopup();
         } else {
-            alert(data.message);
-            document.getElementById('claimPopup').classList.add('hidden');
+            console.error('Failed to claim tickets:', data.error);
         }
     } catch (error) {
         console.error('Error claiming tickets:', error);
-        alert('Failed to claim tickets. Please try again later.');
     }
+}
+
+function closePopup() {
+    document.getElementById('claimPopup').style.display = 'none';
 }
 
 async function showReferralLink() {
