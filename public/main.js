@@ -23,6 +23,7 @@ async function checkTicketClaimStatus() {
             document.getElementById('loadingSpinner').style.display = 'none';
 
             if (!data.has_claimed_tickets) {
+                // Remove the 'hidden' class to show the popup
                 document.getElementById('claimPopup').classList.remove('hidden');
             }
         } else {
@@ -32,6 +33,7 @@ async function checkTicketClaimStatus() {
         console.error('Error fetching user data:', error);
     }
 }
+
 
 async function claimTickets() {
     const userInfo = document.getElementById('userInfo').textContent;
