@@ -25,6 +25,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const userPoints = document.getElementById('points');
     const userTickets = document.getElementById('ticketsInfo');
     const header = document.getElementById('header');
+    const loadingheader = document.getElementById('loadingScreen');
+
 
     // Initialize Telegram Web Apps API
     const tg = window.Telegram.WebApp;
@@ -92,6 +94,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
         gameActive = true; // Set game as active
+        loadingheader.style.display = 'none';
         startScreen.style.display = 'none';
         footer.style.display = 'none';
         header.style.display = 'none';
