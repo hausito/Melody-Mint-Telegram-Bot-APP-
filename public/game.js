@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    // Preload images
     const preloadImages = () => {
         const images = ['home.png', 'tasks.png', 'airdrop.png'];
         images.forEach((src) => {
@@ -7,6 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     };
     preloadImages();
+
     let gameActive = false;
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
@@ -38,7 +40,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let points = 0;
     let tickets = 0;
 
-       // Fetch initial user data (points and tickets)
+    // Fetch initial user data (points and tickets)
     const fetchUserData = async () => {
         try {
             const response = await fetch(`/getUserData?username=${encodeURIComponent(userInfo.textContent)}`);
@@ -68,7 +70,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (tickets > 0) {
             tickets--;
 
-
             // Update tickets on the server
             try {
                 const response = await fetch('/updateTickets', {
@@ -93,14 +94,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         gameActive = true; // Set game as active
         startScreen.style.display = 'none';
         footer.style.display = 'none';
-        header.style.display = 'none'; 
+        header.style.display = 'none';
         startMusic();
         initGame();
         lastTimestamp = performance.now();
         requestAnimationFrame(gameLoop);
         userTickets.textContent = `${tickets}`;
     });
-
 
     tasksButton.addEventListener('click', () => {
         alert('Tasks: Coming Soon!');
@@ -153,6 +153,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             ctx.globalAlpha = this.opacity;
             ctx.fillRect(this.x, this.y, this.width, this.height);
             ctx.globalAlpha = 1;
+            // Add neon border
+            ctx.strokeStyle = '#00ffcc';
+            ctx.lineWidth = 4;
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = '#00ffcc';
+            ctx.strokeRect(this.x, this.y, this.width, this.height);
+            ctx.shadowBlur = 0; // Reset shadow
         }
 
         isClicked(mouseX, mouseY) {
@@ -219,7 +226,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
     }
-
 
     function handleClick(event) {
         if (!gameRunning) return;
@@ -289,8 +295,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // Draw vertical lines
-        ctx.strokeStyle = BORDER_COLOR;
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#00ffcc';
+        ctx.lineWidth = 4;
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = '#00ffcc';
         for (let i = 1; i < COLUMNS; i++) {
             const x = i * TILE_WIDTH;
             ctx.beginPath();
@@ -298,6 +306,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             ctx.lineTo(x, HEIGHT);
             ctx.stroke();
         }
+        ctx.shadowBlur = 0; // Reset shadow
 
         ctx.fillStyle = SHADOW_COLOR;
         ctx.font = 'bold 24px Arial';
@@ -307,7 +316,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         ctx.fillStyle = SKY_BLUE;
         ctx.fillText(`SCORE: ${score}`, WIDTH / 2, 30);
 
-        TILE_SPEED += SPEED_INCREMENT * deltaTime * 60; 
+        TILE_SPEED += SPEED_INCREMENT * deltaTime * 60;
 
         requestAnimationFrame(gameLoop);
     }
@@ -344,7 +353,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function gameOver() {
         if (!gameActive) return;
-        
+
         gameActive = false;
         await saveUser(userInfo.textContent, score);
         const redirectURL = `transition.html?score=${score}`;
@@ -363,8 +372,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const result = await response.json();
             if (result.success) {
-                points = result.data.points; 
-                userPoints.textContent = points; 
+                points = result.data.points;
+                userPoints.textContent = points;
             } else {
                 console.error('Error saving user:', result.error);
             }
