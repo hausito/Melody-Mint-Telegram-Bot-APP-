@@ -62,9 +62,6 @@ async function claimTickets() {
     }
 }
 
-// Other functions remain unchanged
-
-
         async function showReferralLink() {
             const userInfo = document.getElementById('userInfo').textContent;
             try {
