@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    // Preload images
     const preloadImages = () => {
         const images = ['home.png', 'tasks.png', 'airdrop.png'];
         images.forEach((src) => {
@@ -26,11 +25,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const userTickets = document.getElementById('ticketsInfo');
     const header = document.getElementById('header');
 
-    // Initialize Telegram Web Apps API
     const tg = window.Telegram.WebApp;
     const user = tg.initDataUnsafe?.user;
 
-    // Set username or fallback to "Username"
     if (user) {
         userInfo.textContent = user.username || `${user.first_name} ${user.last_name}`;
     } else {
@@ -40,7 +37,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     let points = 0;
     let tickets = 0;
 
-    // Fetch initial user data (points and tickets)
     const fetchUserData = async () => {
         try {
             const response = await fetch(`/getUserData?username=${encodeURIComponent(userInfo.textContent)}`);
@@ -60,7 +56,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     fetchUserData();
 
-    // Update local tickets when claimed in main.js
     document.addEventListener('ticketsUpdated', (event) => {
         tickets = event.detail.tickets;
         userTickets.textContent = `Tickets: ${tickets}`;
@@ -70,7 +65,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (tickets > 0) {
             tickets--;
 
-            // Update tickets on the server
             try {
                 const response = await fetch('/updateTickets', {
                     method: 'POST',
@@ -91,7 +85,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             alert('No more tickets available!');
             return;
         }
-        gameActive = true; // Set game as active
+        gameActive = true;
         startScreen.style.display = 'none';
         footer.style.display = 'none';
         header.style.display = 'none';
@@ -114,12 +108,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     const HEIGHT = canvas.height;
 
     const TILE_COLOR = '#2F3C7E';
-    const BORDER_COLOR = '#FBEAEB';
+    const TILE_BORDER_COLOR = '#00ffcc';
+    const VERTICAL_LINE_COLOR = '#ff00ff';
+    const BACKGROUND_COLOR = '#000';
     const SKY_BLUE = '#87CEEB';
     const SHADOW_COLOR = '#000080';
 
     const COLUMNS = 4;
-    const SEPARATOR = 0; // No space between tiles
+    const SEPARATOR = 0;
     const VERTICAL_GAP = 5;
     const TILE_WIDTH = (WIDTH - (COLUMNS - 1) * SEPARATOR) / COLUMNS;
     const TILE_HEIGHT = HEIGHT / 4 - VERTICAL_GAP;
@@ -130,6 +126,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     let tiles = [];
     let score = 0;
     let gameRunning = true;
+    let lastDropTimestamp = 0;
+    let dropEffectActive = false;
 
     class Tile {
         constructor(x, y) {
@@ -146,20 +144,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         draw() {
+            ctx.save();
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = TILE_BORDER_COLOR;
+            ctx.strokeStyle = TILE_BORDER_COLOR;
+            ctx.lineWidth = 4;
+            ctx.strokeRect(this.x, this.y, this.width, this.height);
+            ctx.restore();
+
             const gradient = ctx.createLinearGradient(this.x, this.y, this.x + this.width, this.y + this.height);
-            gradient.addColorStop(0, '#2F3C7E');
+            gradient.addColorStop(0, TILE_COLOR);
             gradient.addColorStop(1, '#FF6F61');
             ctx.fillStyle = gradient;
             ctx.globalAlpha = this.opacity;
             ctx.fillRect(this.x, this.y, this.width, this.height);
             ctx.globalAlpha = 1;
-            // Add neon border
-            ctx.strokeStyle = '#00ffcc';
-            ctx.lineWidth = 4;
-            ctx.shadowBlur = 20;
-            ctx.shadowColor = '#00ffcc';
-            ctx.strokeRect(this.x, this.y, this.width, this.height);
-            ctx.shadowBlur = 0; // Reset shadow
         }
 
         isClicked(mouseX, mouseY) {
@@ -219,7 +218,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (!tiles.some(tile => {
                 const rect = { x: newTileX, y: newTileY, width: TILE_WIDTH, height: TILE_HEIGHT };
                 return tile.y < rect.y + rect.height && tile.y + tile.height > rect.y &&
-                    tile.x < rect.x + rect.width && tile.x + tile.width > rect.x;
+                    tile.x < rect.x + rect.width && tile.x + rect.width > rect.x;
             })) {
                 tiles.push(new Tile(newTileX, newTileY));
                 break;
@@ -274,7 +273,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         let outOfBounds = false;
         tiles.forEach(tile => {
-            tile.move(TILE_SPEED * deltaTime * 60); 
+            tile.move(TILE_SPEED * deltaTime * 60);
             tile.updateOpacity();
             if (tile.isOutOfBounds()) {
                 outOfBounds = true;
@@ -285,100 +284,59 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (outOfBounds) {
             gameRunning = false;
             gameOver();
-            return;
+        } else {
+            TILE_SPEED += SPEED_INCREMENT;
+
+            if (timestamp - lastDropTimestamp > 1000) {
+                lastDropTimestamp = timestamp;
+                dropEffectActive = true;
+            }
+
+            if (dropEffectActive) {
+                ctx.save();
+                ctx.globalCompositeOperation = 'lighter';
+                ctx.fillStyle = `rgba(255, 0, 0, ${Math.random() * 0.5})`;
+                ctx.fillRect(0, 0, WIDTH, HEIGHT);
+                ctx.restore();
+                dropEffectActive = false;
+            }
+
+            drawGrid();
+            requestAnimationFrame(gameLoop);
         }
+    }
 
-        tiles = tiles.filter(tile => tile.y < HEIGHT && tile.opacity > 0);
-
-        while (tiles.length < 4) {
-            addNewTile();
-        }
-
-        // Draw vertical lines
-        ctx.strokeStyle = '#00ffcc';
-        ctx.lineWidth = 4;
-        ctx.shadowBlur = 20;
-        ctx.shadowColor = '#00ffcc';
+    function drawGrid() {
+        ctx.strokeStyle = VERTICAL_LINE_COLOR;
+        ctx.lineWidth = 2;
         for (let i = 1; i < COLUMNS; i++) {
-            const x = i * TILE_WIDTH;
             ctx.beginPath();
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x, HEIGHT);
+            ctx.moveTo(i * (TILE_WIDTH + SEPARATOR) - SEPARATOR / 2, 0);
+            ctx.lineTo(i * (TILE_WIDTH + SEPARATOR) - SEPARATOR / 2, HEIGHT);
             ctx.stroke();
         }
-        ctx.shadowBlur = 0; // Reset shadow
+    }
 
-        ctx.fillStyle = SHADOW_COLOR;
-        ctx.font = 'bold 24px Arial';
+    function gameOver() {
+        ctx.clearRect(0, 0, WIDTH, HEIGHT);
+        backgroundMusic.pause();
+        ctx.font = '48px Arial';
+        ctx.fillStyle = '#FFFFFF';
         ctx.textAlign = 'center';
-        ctx.fillText(`SCORE: ${score}`, WIDTH / 2 + 2, 32);
-
-        ctx.fillStyle = SKY_BLUE;
-        ctx.fillText(`SCORE: ${score}`, WIDTH / 2, 30);
-
-        TILE_SPEED += SPEED_INCREMENT * deltaTime * 60;
-
-        requestAnimationFrame(gameLoop);
+        ctx.fillText('Game Over', WIDTH / 2, HEIGHT / 2);
+        ctx.fillText(`Score: ${score}`, WIDTH / 2, HEIGHT / 2 + 60);
+        setTimeout(() => {
+            startScreen.style.display = 'flex';
+            footer.style.display = 'block';
+            header.style.display = 'block';
+            gameActive = false;
+        }, 2000);
     }
 
     function startMusic() {
+        backgroundMusic.currentTime = 0;
         backgroundMusic.play().catch(function(error) {
             console.error('Error playing audio:', error);
         });
-    }
-
-    tg.onEvent('themeChanged', function() {
-        const themeParams = tg.themeParams;
-        if (themeParams && themeParams.bg_color && !themeParams.bg_color.includes('unset') && !themeParams.bg_color.includes('none')) {
-            document.body.style.backgroundColor = themeParams.bg_color;
-        }
-    });
-
-    tg.ready().then(function() {
-        if (tg.themeParams) {
-            const themeParams = tg.themeParams;
-            if (themeParams.bg_color && !themeParams.bg_color.includes('unset') && !themeParams.bg_color.includes('none')) {
-                document.body.style.backgroundColor = themeParams.bg_color;
-            }
-        }
-        if (tg.initDataUnsafe?.user) {
-            userInfo.textContent = tg.initDataUnsafe.user.username || `${tg.initDataUnsafe.user.first_name} ${tg.initDataUnsafe.user.last_name}`;
-        } else {
-            userInfo.textContent = 'Username';
-        }
-        if (tg.initDataUnsafe?.is_explicitly_enabled) {
-            startMusic();
-        }
-    });
-
-    async function gameOver() {
-        if (!gameActive) return;
-
-        gameActive = false;
-        await saveUser(userInfo.textContent, score);
-        const redirectURL = `transition.html?score=${score}`;
-        window.location.replace(redirectURL);
-    }
-
-    async function saveUser(username, scoreToAdd) {
-        try {
-            const response = await fetch('/saveUser', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, points: scoreToAdd }),
-            });
-
-            const result = await response.json();
-            if (result.success) {
-                points = result.data.points;
-                userPoints.textContent = points;
-            } else {
-                console.error('Error saving user:', result.error);
-            }
-        } catch (error) {
-            console.error('Error saving user:', error);
-        }
     }
 });
