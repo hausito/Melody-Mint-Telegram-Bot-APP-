@@ -65,19 +65,15 @@
             </div>
         </div>
     </div>
-<div id="myModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <h2>Invite Friends</h2>
-        <p>Share this link with your friends:</p>
-        <div class="referral-link-container">
-            <span id="referralLink" class="referral-link"></span>
-            <button onclick="copyToClipboard()" class="copy-button">Copy Link</button>
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <p id="modalContent">Referral Link: <span id="referralLink"></span></p>
+            <button onclick="copyToClipboard()">Copy to Clipboard</button>
+            <p id="friendsInvited">Friends Invited: <span id="friendsCount"></span></p>
+            <button onclick="closeModal()">Close</button>
         </div>
-        <p id="friendsInvited">Friends Invited: <span id="friendsCount"></span></p>
     </div>
-</div>
-
 
  
     <audio id="backgroundMusic" src="background-music.mp3" loop></audio>
