@@ -7,37 +7,33 @@
     <link rel="stylesheet" href="styles.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>    
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="main.js"></script>
+    <script src="main.js" defer></script>
+    <script src="game.js" defer></script>
 </head>
-<body class="loading">
+<body>
     <div id="gameContainer">
         <canvas id="gameCanvas" width="360" height="640"></canvas>
-
         <div id="header">
             <div id="topHalf">
                 <img src="background.jpeg" alt="Background Image" class="background-image">  
                 <div class="absolute top-2 left-2 flex items-center space-x-2">
-                    <img src="icons/ticket-128.png" alt="Tickets" class="icons"> <!-- Small size -->
-                    <span id="ticketsInfo" class="text-custom text-xl font-bold text-white">5</span> <!-- Number 5 with custom color -->
+                    <img src="icons/ticket-128.png" alt="Tickets" class="icons">
+                    <span id="ticketsInfo" class="text-custom text-xl font-bold text-white">5</span>
                 </div>
                 <div id="userInfo" class="text-custom text-xl font-bold text-white">@username</div>
                 <div id="inviteButton" onclick="showReferralLink()" class="absolute top-2 right-2 p-2 cursor-pointer">
                     <img src="icons/add-user-2-128.png" alt="Invite Friends" class="icons"> 
                 </div>
-
                 <div class="coin-container mb-3">
                     <span id="points" class="text-2xl text-white font-bold text-center">6000</span>
                 </div>
             </div>
-
             <div class="progress-bar"></div>
-
             <div class="controls">
                 <img src="icons/media-step-backward-128.png" alt="Backward">
                 <img src="icons/play-3-128.png" alt="Play" class="play">
                 <img src="icons/media-step-forward-128.png" alt="Forward">
             </div>
-
             <div id="claimPopup" class="popup">
                 <div class="popup-content">
                     <span class="close" onclick="closePopup()">&times;</span>
@@ -47,30 +43,22 @@
                 </div>
             </div>
         </div>
-
-        <div id="startScreen">  
+        <div id="startScreen">
             <div id="newLayout" class="bg-white rounded-lg p-4 shadow-lg">
-
                 <div class="buttons-container mb-8">
-                    <!-- Button Earn Coins -->
-                    <button id="playButton" class="button-custom custom_purple text-white text-xl py-3 rounded-lg shadow-inner-custom-button ">
+                    <button id="playButton" class="button-custom custom_purple text-white text-xl py-3 rounded-lg shadow-inner-custom-button">
                         Earn Coins
                     </button>
-
-                    <!-- Button Tasks -->
-                    <button id="tasksButton" class="button-custom custom_blue text-white text-xl py-3 rounded-lg shadow-inner-custom-button ">
+                    <button id="tasksButton" class="button-custom custom_blue text-white text-xl py-3 rounded-lg shadow-inner-custom-button">
                         Tasks
                     </button>
-
-                    <!-- Button Upgrade -->
-                    <button id="upgradeButton" class="button-custom custom_purple text-white text-xl py-3 rounded-lg shadow-inner-custom-button ">
+                    <button id="upgradeButton" class="button-custom custom_purple text-white text-xl py-3 rounded-lg shadow-inner-custom-button">
                         Upgrade
                     </button>
                 </div>
             </div>
         </div>
     </div>
-
     <div id="myModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
@@ -80,10 +68,7 @@
             <button onclick="closeModal()">Close</button>
         </div>
     </div>
-    
     <audio id="backgroundMusic" src="background-music.mp3" loop></audio>
-
-    <!-- Footer -->
     <div id="footer">
         <button class="footer-button custom_purple" onclick="window.location.href='index.html'">
             <img src="icons/home-5-128.png" alt="Home">
@@ -95,7 +80,5 @@
             <img src="icons/package-2-128.png" alt="Airdrop">
         </button>
     </div>
-
-    <script src="game.js"></script>
 </body>
 </html>
