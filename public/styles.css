@@ -253,13 +253,69 @@ canvas {
 }
 
 .modal-content {
-    background-color: white;
-    margin: auto;
+    background-color: #222; /* Dark background */
     padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 400px;
-    border-radius: 10px;
+    border-radius: 20px;
+    text-align: center;
+    position: relative;
+    max-width: 80%;
+    margin: auto;
+}
+
+.modal-content h2 {
+    color: #fff; /* White text */
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.modal-content p {
+    color: #ccc; /* Light text */
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.referral-link-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.referral-link {
+    flex-grow: 1;
+    background-color: #333;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    word-break: break-all;
+}
+
+.copy-button {
+    background-color: #9A20AA; /* Purple button */
+    color: #fff;
+    font-size: 1.2rem;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.copy-button:hover {
+    background-color: #6b0d70; /* Darker purple on hover */
+}
+
+.modal-content .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #ccc;
+    font-size: 1.6rem;
+    cursor: pointer;
+}
+
+.modal-content .close:hover {
+    color: #fff; /* White on hover */
 }
 
 .close {
