@@ -34,30 +34,36 @@ async function checkTicketClaimStatus() {
 }
 
 async function claimTickets() {
-    const userInfo = document.getElementById('userInfo').textContent.trim().slice(1); // Remove '@'
+    const userInfo = document.getElementById('userInfo').textContent;
     try {
         const response = await fetch('/claimTickets', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username: userInfo }),
+            body: JSON.stringify({ username: userInfo })
         });
         const data = await response.json();
 
         if (data.success) {
-            const ticketsInfo = document.getElementById('ticketsInfo');
-            ticketsInfo.textContent = `${data.tickets}`;
-            closePopup();
+            alert('Tickets claimed successfully!');
+            document.getElementById('ticketsInfo').textContent = `${data.tickets}`;
+            document.getElementById('claimPopup').style.display = 'none';
+            
+            // Trigger event to update tickets in game.js
+            const event = new CustomEvent('ticketsUpdated', { detail: { tickets: data.tickets } });
+            document.dispatchEvent(event);
         } else {
-            console.error('Failed to claim tickets:', data.error);
+            alert(data.message);
+            document.getElementById('claimPopup').style.display = 'none';
         }
     } catch (error) {
         console.error('Error claiming tickets:', error);
+        alert('Failed to claim tickets. Please try again later.');
     }
 }
 
-function closePopup() {
-    document.getElementById('claimPopup').style.display = 'none';
-}
+
+
+
 async function showReferralLink() {
     const userInfo = document.getElementById('userInfo').textContent;
     try {
