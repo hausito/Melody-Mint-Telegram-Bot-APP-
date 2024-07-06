@@ -12,10 +12,6 @@ body {
     background-repeat: no-repeat;
     color: #333;
 }
-/* Add this to your styles.css or within a <style> tag in your HTML */
-.hidden {
-    display: none !important;
-}
 
 /*Disable Copy text*/
 body {
