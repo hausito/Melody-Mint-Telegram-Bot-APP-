@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
     if (window.Telegram && window.Telegram.WebApp) {
         window.Telegram.WebApp.expand();
-            await checkTicketClaimStatus();
     }
     await checkTicketClaimStatus();
 });
@@ -17,11 +16,16 @@ async function checkTicketClaimStatus() {
             const ticketsInfo = document.getElementById('ticketsInfo');
             ticketsInfo.textContent = `${data.tickets}`;
 
-            const pointsInfo = document.getElementById('points');  // Update points display
+            const pointsInfo = document.getElementById('points');
             pointsInfo.textContent = `${data.points}`;
+
+            // Ensure the server correctly reflects ticket claiming status
+            console.log('Has claimed tickets:', data.has_claimed_tickets);
 
             if (!data.has_claimed_tickets) {
                 document.getElementById('claimPopup').style.display = 'flex';
+            } else {
+                document.getElementById('claimPopup').style.display = 'none'; // Ensure popup is hidden if tickets are already claimed
             }
         } else {
             console.error('Failed to fetch user data:', data.error);
@@ -46,9 +50,12 @@ async function claimTickets() {
             document.getElementById('ticketsInfo').textContent = `${data.tickets}`;
             document.getElementById('claimPopup').style.display = 'none';
             
-            // Trigger event to update tickets in game.js
+            // Update local UI and possibly trigger other updates
             const event = new CustomEvent('ticketsUpdated', { detail: { tickets: data.tickets } });
             document.dispatchEvent(event);
+            
+            // Reload ticket claiming status after claiming
+            await checkTicketClaimStatus();
         } else {
             alert(data.message);
             document.getElementById('claimPopup').style.display = 'none';
