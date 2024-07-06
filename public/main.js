@@ -110,3 +110,4 @@ async function claimTickets() {
             document.body.removeChild(dummyInput);
             alert('Referral link copied to clipboard!');
         }
+ 
