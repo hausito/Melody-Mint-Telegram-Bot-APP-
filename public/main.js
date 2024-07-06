@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function checkTicketClaimStatus() {
-    const userInfo = document.getElementById('userInfo').textContent;
+    const userInfo = document.getElementById('userInfo').textContent.trim();
     try {
         const response = await fetch(`/getUserData?username=${encodeURIComponent(userInfo)}`);
         const data = await response.json();
@@ -24,7 +24,7 @@ async function checkTicketClaimStatus() {
             if (!data.has_claimed_tickets) {
                 claimPopup.style.display = 'block';
             } else {
-                claimPopup.style.display = 'none'; // Hide the popup if tickets are already claimed
+                claimPopup.style.display = 'none';
             }
         } else {
             console.error('Failed to fetch user data:', data.error);
@@ -34,9 +34,8 @@ async function checkTicketClaimStatus() {
     }
 }
 
-
 async function claimTickets() {
-    const userInfo = document.getElementById('userInfo').textContent;
+    const userInfo = document.getElementById('userInfo').textContent.trim();
     try {
         const response = await fetch('/claimTickets', {
             method: 'POST',
@@ -62,6 +61,7 @@ async function claimTickets() {
         alert('Failed to claim tickets. Please try again later.');
     }
 }
+
 
         async function showReferralLink() {
             const userInfo = document.getElementById('userInfo').textContent;
