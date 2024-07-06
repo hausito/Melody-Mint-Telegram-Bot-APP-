@@ -52,6 +52,8 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.5), 0 0 30px rgba(255, 0, 255, 0.4);
+}
 }
 
 canvas {
