@@ -21,6 +21,29 @@ body {
     user-select: none; /* Non-prefixed version, currently supported by Chrome, Opera and Edge */
     -webkit-touch-callout: none; /* iOS Safari */
 }
+body.loading #gameContainer {
+    display: none;
+}
+
+body.loading {
+    background: #000;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+body.loading::before {
+    content: "Loading...";
+    font-size: 2rem;
+    animation: blink 1s linear infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
 
 .background-image {
     position: absolute;
