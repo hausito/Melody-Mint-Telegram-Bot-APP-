@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
     if (window.Telegram && window.Telegram.WebApp) {
         window.Telegram.WebApp.expand();
+            await checkTicketClaimStatus();
     }
 
     await checkTicketClaimStatus();
