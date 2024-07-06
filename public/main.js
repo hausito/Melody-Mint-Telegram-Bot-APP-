@@ -24,7 +24,7 @@ async function checkTicketClaimStatus() {
             if (!data.has_claimed_tickets) {
                 claimPopup.style.display = 'block';
             } else {
-                claimPopup.style.display = 'none';
+                claimPopup.style.display = 'none'; // Hide the popup if tickets are already claimed
             }
         } else {
             console.error('Failed to fetch user data:', data.error);
@@ -33,6 +33,7 @@ async function checkTicketClaimStatus() {
         console.error('Error fetching user data:', error);
     }
 }
+
 
 async function claimTickets() {
     const userInfo = document.getElementById('userInfo').textContent;
