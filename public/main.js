@@ -4,8 +4,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         await checkTicketClaimStatus();
     }
     await checkTicketClaimStatus();
-});
 
+    // Hide the loading screen once everything is loaded
+    document.body.classList.remove('loading');
+});
 async function checkTicketClaimStatus() {
     const userInfo = document.getElementById('userInfo').textContent;
     try {
