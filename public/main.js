@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', async () => {
     if (window.Telegram && window.Telegram.WebApp) {
         window.Telegram.WebApp.expand();
-        await checkTicketClaimStatus();
     }
+
     await checkTicketClaimStatus();
 });
 
@@ -17,13 +17,14 @@ async function checkTicketClaimStatus() {
             const ticketsInfo = document.getElementById('ticketsInfo');
             ticketsInfo.textContent = `${data.tickets}`;
 
-            const pointsInfo = document.getElementById('points');  // Update points display
+            const pointsInfo = document.getElementById('points');
             pointsInfo.textContent = `${data.points}`;
 
+            const claimPopup = document.getElementById('claimPopup');
             if (!data.has_claimed_tickets) {
-                document.getElementById('claimPopup').style.display = 'block';
+                claimPopup.style.display = 'block';
             } else {
-                document.getElementById('claimPopup').style.display = 'none';
+                claimPopup.style.display = 'none';
             }
         } else {
             console.error('Failed to fetch user data:', data.error);
@@ -47,7 +48,7 @@ async function claimTickets() {
             alert('Tickets claimed successfully!');
             document.getElementById('ticketsInfo').textContent = `${data.tickets}`;
             document.getElementById('claimPopup').style.display = 'none';
-            
+
             // Trigger event to update tickets in game.js
             const event = new CustomEvent('ticketsUpdated', { detail: { tickets: data.tickets } });
             document.dispatchEvent(event);
@@ -60,6 +61,9 @@ async function claimTickets() {
         alert('Failed to claim tickets. Please try again later.');
     }
 }
+
+// Other functions remain unchanged
+
 
         async function showReferralLink() {
             const userInfo = document.getElementById('userInfo').textContent;
