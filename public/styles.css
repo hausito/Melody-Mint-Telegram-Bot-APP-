@@ -265,7 +265,7 @@ canvas {
 }
 
 .popup {
-    display: flex; /* Changed from 'none' to 'flex' */
+    display: none; /* Initially hide the popup */
     position: fixed; /* Stay in place */
     z-index: 1; /* Sit on top */
     left: 0;
@@ -276,6 +276,9 @@ canvas {
     justify-content: center;
     align-items: center;
 }
+
+/* Rest of your CSS */
+
 
 .popup-content {
     background-color: #222; /* Dark background */
