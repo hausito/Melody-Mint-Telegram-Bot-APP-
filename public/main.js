@@ -1,13 +1,12 @@
 document.addEventListener('DOMContentLoaded', async () => {
     if (window.Telegram && window.Telegram.WebApp) {
         window.Telegram.WebApp.expand();
-        await checkTicketClaimStatus();
     }
     await checkTicketClaimStatus();
 });
 
 async function checkTicketClaimStatus() {
-    const userInfo = document.getElementById('userInfo').textContent;
+    const userInfo = document.getElementById('userInfo').textContent.trim().slice(1); // Remove '@'
     try {
         const response = await fetch(`/getUserData?username=${encodeURIComponent(userInfo)}`);
         const data = await response.json();
@@ -35,7 +34,7 @@ async function checkTicketClaimStatus() {
 }
 
 async function claimTickets() {
-    const userInfo = document.getElementById('userInfo').textContent;
+    const userInfo = document.getElementById('userInfo').textContent.trim().slice(1); // Remove '@'
     try {
         const response = await fetch('/claimTickets', {
             method: 'POST',
@@ -59,7 +58,6 @@ async function claimTickets() {
 function closePopup() {
     document.getElementById('claimPopup').style.display = 'none';
 }
-
 async function showReferralLink() {
     const userInfo = document.getElementById('userInfo').textContent;
     try {
