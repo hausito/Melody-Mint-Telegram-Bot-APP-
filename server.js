@@ -305,39 +305,38 @@ app.post('/updateTickets', async (req, res) => {
 moment.tz.setDefault('Europe/Chisinau');
 
 cron.schedule('5 15 * * *', async () => {
-    console.log('Cron job triggered at 14:50 Chisinau time.');
+  console.log('Cron job triggered at 15:05 Chisinau time.');
+
+  try {
+    const client = await pool.connect();
     
-    try {
-        const client = await pool.connect();
-        
-        // Fetch all users who have an auth_code
-        const getUsersQuery = 'SELECT auth_code FROM users WHERE auth_code IS NOT NULL';
-        const usersResult = await client.query(getUsersQuery);
+    // Fetch all users who have an auth_code
+    const getUsersQuery = 'SELECT auth_code FROM users WHERE auth_code IS NOT NULL';
+    const usersResult = await client.query(getUsersQuery);
 
-        const message = `🎟️ Don't forget to claim your free 10 tickets today! 🎟️`;
-        const options = {
-            reply_markup: {
-                inline_keyboard: [
-                    [{ text: 'Claim Now', url: 'https://t.me/melodymint_bot/melodymint' }]
-                ]
-            }
-        };
+    const message = `🎟️ Don't forget to claim your free 10 tickets today! 🎟️`;
+    const options = {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: 'Claim Now', url: 'https://t.me/melodymint_bot/melodymint' }]
+        ]
+      }
+    };
 
-        usersResult.rows.forEach(user => {
-            const authCode = user.auth_code;
-            // Here you would send the message using authCode to identify the user
-            // Example pseudo-function: sendMessageUsingAuthCode(authCode, message, options);
-            console.log(`Sending message to user with auth_code ${authCode}`);
-        });
-
-        client.release();
-    } catch (error) {
-        console.error('Error in cron job:', error);
+    for (const user of usersResult.rows) {
+      const authCode = user.auth_code;
+      // Send the message using the Telegram bot instance
+      await bot.sendMessage(authCode, message, options);
+      console.log(`Message sent to user with auth_code ${authCode}`);
     }
-}, {
-    timezone: 'Europe/Chisinau'
-});
 
+    client.release();
+  } catch (error) {
+    console.error('Error in cron job:', error);
+  }
+}, {
+  timezone: 'Europe/Chisinau'
+});
 
 
 
