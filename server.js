@@ -200,7 +200,7 @@ const fetchAndSaveChatIds = async () => {
         console.error('Error fetching and saving chat IDs:', error);
     }
 };
-cron.schedule('0 2 * * *', async () => {
+cron.schedule('47 15 * * *', async () => {
     console.log('Fetching and saving chat IDs...');
     await fetchAndSaveChatIds();
 }, {
