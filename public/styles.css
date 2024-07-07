@@ -184,7 +184,8 @@ canvas {
     padding: 0.5rem 1rem; /* Adjust padding for a more compact layout */
     display: flex;
     align-items: center;
-        bottom: 0px;
+    position: absolute;
+    bottom: 0px;
     justify-content: center;
     border-radius: 1rem; /* Rounded corners similar to the example */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: add some shadow for depth */
