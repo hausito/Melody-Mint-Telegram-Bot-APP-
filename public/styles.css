@@ -135,8 +135,8 @@ canvas {
     align-items: center;
 }
 .coin-icon {
-    width: 4rem;  /* Adjust size as needed */
-    height: 4rem; /* Adjust size as needed */
+    width: 3rem;  /* Adjust size as needed */
+    height: 3rem; /* Adjust size as needed */
 }
 
 .progress-bar {
@@ -183,7 +183,7 @@ canvas {
 }
 
 .coin-container {
-    background-color: #1E3A8A; /* Dark Blue */
+    background-color: #B8860B; /* Gold */
 
     padding: 1.5% 13%;
     position: absolute;
