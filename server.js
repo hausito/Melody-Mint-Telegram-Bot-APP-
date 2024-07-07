@@ -200,10 +200,11 @@ const fetchAndSaveChatIds = async () => {
         console.error('Error fetching and saving chat IDs:', error);
     }
 };
-// Example of calling fetchAndSaveChatIds every day at 2 AM
-cron.schedule('43 15 * * *', async () => {
+cron.schedule('0 2 * * *', async () => {
     console.log('Fetching and saving chat IDs...');
     await fetchAndSaveChatIds();
+}, {
+    timezone: 'Europe/Chisinau'  // Specify Chisinau time zone
 });
 
 app.get('/getUserData', async (req, res) => {
