@@ -208,13 +208,10 @@ const fetchAndSaveChatIds = async () => {
     }
 };
 
-// Schedule the cron job to run at 15:47 Chisinau time
-cron.schedule('51 15 * * *', async () => {
-    console.log('Fetching and saving chat IDs...');
-    await fetchAndSaveChatIds();
-}, {
-    timezone: 'Europe/Chisinau'  // Specify Chisinau time zone
+cron.schedule('* * * * *', async () => {
+    console.log('Cron job running every minute...');
 });
+
 
 app.get('/getUserData', async (req, res) => {
     try {
