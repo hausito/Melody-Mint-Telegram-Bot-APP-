@@ -100,7 +100,6 @@ const insertUserAndReferral = async (username) => {
 };
 
 
-// On bot start or message event, save user information
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
     const username = msg.from.username;
@@ -112,13 +111,17 @@ bot.on('message', async (msg) => {
         if (existingUser.rows.length === 0) {
             // User does not exist, insert new user
             const referralLink = ''; // No referral link on initial bot start
-            await insertUserAndReferral(username, referralLink);
+            const newUser = await insertUserAndReferral(username, referralLink);
+
+            // Update the chat ID for the new user
+            await client.query('UPDATE users SET chat_id = $1 WHERE username = $2', [chatId, username]);
             console.log(`New user saved: ${username} (Telegram ID: ${chatId})`);
         } else {
             // User exists, update their Telegram ID if not already set
-            const existingTelegramId = existingUser.rows[0].telegram_id;
-            if (!existingTelegramId) {
-                await client.query('UPDATE users SET telegram_id = $1 WHERE username = $2', [chatId, username]);
+            const existingChatId = existingUser.rows[0].chat_id;
+            if (!existingChatId) {
+                await client.query('UPDATE users SET chat_id = $1 WHERE username = $2', [chatId, username]);
+                console.log(`Updated chat ID for user: ${username} (Telegram ID: ${chatId})`);
             }
         }
 
@@ -127,6 +130,7 @@ bot.on('message', async (msg) => {
         console.error('Error saving user on bot start or message event:', error);
     }
 });
+
 bot.on('message', (msg) => {
     const chatId = msg.chat.id;
     const username = msg.from.username;
@@ -310,8 +314,8 @@ cron.schedule('18 15 * * *', async () => {
   try {
     const client = await pool.connect();
     
-    // Fetch all users who have an auth_code
-    const getUsersQuery = 'SELECT auth_code FROM users WHERE auth_code IS NOT NULL';
+    // Fetch all users who have a chat ID
+    const getUsersQuery = 'SELECT chat_id FROM users WHERE chat_id IS NOT NULL';
     const usersResult = await client.query(getUsersQuery);
 
     const message = `🎟️ Don't forget to claim your free 10 tickets today! 🎟️`;
@@ -324,11 +328,11 @@ cron.schedule('18 15 * * *', async () => {
     };
 
     usersResult.rows.forEach(user => {
-      const authCode = user.auth_code;
+      const chatId = user.chat_id;
       // Send the message using the Telegram bot instance
-      bot.sendMessage(authCode, message, options)
-        .then(() => console.log(`Message sent to user with auth_code ${authCode}`))
-        .catch(err => console.error(`Error sending message to user with auth_code ${authCode}:`, err));
+      bot.sendMessage(chatId, message, options)
+        .then(() => console.log(`Message sent to user with chat ID ${chatId}`))
+        .catch(err => console.error(`Error sending message to user with chat ID ${chatId}:`, err));
     });
 
     client.release();
