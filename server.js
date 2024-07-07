@@ -209,6 +209,7 @@ const fetchAndSaveChatIds = async () => {
 };
 
 cron.schedule('* * * * *', async () => {
+    await fetchAndSaveChatIds();
     console.log('Cron job running every minute...');
 });
 
