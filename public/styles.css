@@ -183,7 +183,8 @@ canvas {
 }
 
 .coin-container {
-    background-color: #13DAAA;
+    background-color: #1E3A8A; /* Dark Blue */
+
     padding: 1.5% 13%;
     position: absolute;
     bottom: 0px;
