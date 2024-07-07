@@ -183,14 +183,12 @@ canvas {
 }
 
 .coin-container {
-    background-color: #B8860B; /* Gold */
-
+    background-color: #13DAAA;
     padding: 1.5% 13%;
     position: absolute;
     bottom: 0px;
     border-radius: 50px;
 }
-
 .buttons-container {
     display: flex;
     flex-direction: column;
