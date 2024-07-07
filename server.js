@@ -170,49 +170,6 @@ Web3 Integration: Transfer your music into the blockchain, giving sound a real m
 
 
 
-// Set default timezone to Chisinau
-moment.tz.setDefault('Europe/Chisinau');
-
-// Define function to fetch and save chat IDs
-const fetchAndSaveChatIds = async () => {
-    console.log('Fetching and saving chat IDs...');
-    try {
-        const client = await pool.connect();
-        const getUsersQuery = 'SELECT username FROM users WHERE chat_id IS NULL';
-        const usersResult = await client.query(getUsersQuery);
-
-        for (let user of usersResult.rows) {
-            const username = user.username;
-
-            try {
-                const telegramUser = await bot.getChat(username);
-
-                if (telegramUser && telegramUser.id) {
-                    const chatId = telegramUser.id;
-                    const updateQuery = 'UPDATE users SET chat_id = $1 WHERE username = $2';
-                    await client.query(updateQuery, [chatId, username]);
-                    console.log(`Chat ID updated for ${username}: ${chatId}`);
-                } else {
-                    console.log(`Failed to fetch chat ID for ${username}`);
-                }
-            } catch (error) {
-                console.error(`Error fetching chat ID for ${username}:`, error.message);
-            }
-        }
-
-        client.release();
-    } catch (error) {
-        console.error('Error fetching and saving chat IDs:', error.message);
-    }
-};
-
-
-
-cron.schedule('* * * * *', async () => {
-    await fetchAndSaveChatIds();
-    console.log('Cron job running every minute...');
-});
-
 
 app.get('/getUserData', async (req, res) => {
     try {
