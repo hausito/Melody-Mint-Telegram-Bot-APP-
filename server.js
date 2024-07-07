@@ -174,7 +174,6 @@ Web3 Integration: Transfer your music into the blockchain, giving sound a real m
 moment.tz.setDefault('Europe/Chisinau');
 
 // Define function to fetch and save chat IDs
-
 const fetchAndSaveChatIds = async () => {
     console.log('Fetching and saving chat IDs...');
     try {
