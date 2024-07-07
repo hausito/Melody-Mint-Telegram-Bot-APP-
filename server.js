@@ -301,21 +301,25 @@ app.post('/updateTickets', async (req, res) => {
     }
 });
 
-cron.schedule('31 14 * * *', async () => {
-    console.log('Cron job triggered to send messages for claiming tickets.');
-    
+// Set default timezone to Chisinau
+moment.tz.setDefault('Europe/Chisinau');
+
+// Schedule cron job to update tickets and notify users
+cron.schedule('41 14 * * *', async () => {
+    console.log('Cron job triggered to update tickets and notify users.');
     try {
         const client = await pool.connect();
+        
+        // Increase tickets for every user
+        const updateQuery = 'UPDATE users SET tickets = tickets + 10 RETURNING *';
+        const result = await client.query(updateQuery);
+        console.log(`Increased tickets for ${result.rowCount} users.`);
 
-        // Get all users' telegram IDs
+        // Notify users via Telegram
         const getUsersQuery = 'SELECT telegram_id FROM users';
-        const result = await client.query(getUsersQuery);
-        const userIds = result.rows.map(row => row.telegram_id);
-
-        console.log(`Found ${userIds.length} users to notify.`);
+        const usersResult = await client.query(getUsersQuery);
 
         const message = `🎟️ Don't forget to claim your free 10 tickets today! 🎟️`;
-
         const options = {
             reply_markup: {
                 inline_keyboard: [
@@ -324,26 +328,23 @@ cron.schedule('31 14 * * *', async () => {
             }
         };
 
-        for (const userId of userIds) {
-            try {
-                await bot.sendMessage(userId, message, options);
-                console.log(`Message sent to user ${userId}`);
-            } catch (err) {
-                console.error(`Error sending message to user ${userId}:`, err);
-            }
-        }
+        usersResult.rows.forEach(user => {
+            bot.sendMessage(user.telegram_id, message, options)
+                .then(() => console.log(`Message sent to user ${user.telegram_id}`))
+                .catch(err => console.error(`Error sending message to user ${user.telegram_id}:`, err));
+        });
 
         // Reset claim status for all users
         const resetQuery = 'UPDATE users SET has_claimed_tickets = FALSE';
         await client.query(resetQuery);
-        console.log('Claim status reset for all users.');
 
         client.release();
-    } catch (err) {
-        console.error('Error in cron job:', err);
+        console.log('Claim status reset for all users.');
+    } catch (error) {
+        console.error('Error in cron job:', error);
     }
 }, {
-    timezone: 'Europe/Chisinau' // Set the timezone to Chisinau
+    timezone: 'Europe/Chisinau'
 });
 
 
