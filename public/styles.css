@@ -134,6 +134,10 @@ canvas {
     justify-content: center;
     align-items: center;
 }
+.coin-icon {
+    width: 2rem;  /* Adjust size as needed */
+    height: 2rem; /* Adjust size as needed */
+}
 
 .progress-bar {
     position: absolute;
