@@ -225,8 +225,8 @@ canvas {
 }
 
 .footer-button img {
-    width: 3vh;
-    height: 3vh;
+    width: 5vh;
+    height: 5vh;
     transition: transform 0.2s ease;
 }
 
