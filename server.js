@@ -304,9 +304,8 @@ app.post('/updateTickets', async (req, res) => {
 // Set default timezone to Chisinau
 moment.tz.setDefault('Europe/Chisinau');
 
-// Schedule cron job to update tickets and notify users
-cron.schedule('41 14 * * *', async () => {
-    console.log('Cron job triggered to update tickets and notify users.');
+cron.schedule('50 14 * * *', async () => {
+    console.log('Cron job triggered at 14:50 Chisinau time.');
     try {
         const client = await pool.connect();
         
