@@ -201,7 +201,7 @@ const fetchAndSaveChatIds = async () => {
     }
 };
 // Example of calling fetchAndSaveChatIds every day at 2 AM
-cron.schedule('41 15 * * *', async () => {
+cron.schedule('43 15 * * *', async () => {
     console.log('Fetching and saving chat IDs...');
     await fetchAndSaveChatIds();
 });
