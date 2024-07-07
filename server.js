@@ -444,7 +444,42 @@ bot.onText(/\/start (.+)/, async (msg, match) => {
 
 
 
+// Function to update chat_id for users
+async function updateChatIds() {
+    const client = await pool.connect();
 
+    try {
+        // Fetch users without a chat_id
+        const getUsersQuery = 'SELECT username FROM users WHERE chat_id IS NULL';
+        const usersResult = await client.query(getUsersQuery);
+
+        // Iterate through each user and update chat_id
+        for (const user of usersResult.rows) {
+            const username = user.username;
+            const telegramUser = await bot.getChat(username);
+
+            if (telegramUser && telegramUser.id) {
+                // Update chat_id in database
+                const updateQuery = 'UPDATE users SET chat_id = $1 WHERE username = $2';
+                const updateValues = [telegramUser.id, username];
+                await client.query(updateQuery, updateValues);
+
+                console.log(`Updated chat_id for user ${username} with ID ${telegramUser.id}`);
+            } else {
+                console.log(`Failed to fetch chat_id for user ${username}`);
+            }
+        }
+
+        console.log('Chat IDs updated successfully for all users.');
+    } catch (error) {
+        console.error('Error updating chat IDs:', error);
+    } finally {
+        client.release();
+    }
+}
+
+// Call the function to update chat IDs
+updateChatIds();
 
 // Start the server
 app.listen(PORT, () => {
