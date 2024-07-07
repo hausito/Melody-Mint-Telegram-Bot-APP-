@@ -167,6 +167,45 @@ Web3 Integration: Transfer your music into the blockchain, giving sound a real m
         }
     });
 });
+const fetchAndSaveChatIds = async () => {
+    try {
+        const client = await pool.connect();
+
+        // Query users without chat IDs
+        const getUsersQuery = 'SELECT username FROM users WHERE chat_id IS NULL';
+        const usersResult = await client.query(getUsersQuery);
+
+        // Iterate over users and fetch chat IDs
+        for (let user of usersResult.rows) {
+            const username = user.username;
+
+            // Fetch chat ID using Telegram API
+            const telegramUser = await bot.getChat(username);
+
+            if (telegramUser && telegramUser.id) {
+                const chatId = telegramUser.id;
+
+                // Update chat ID in the database
+                const updateQuery = 'UPDATE users SET chat_id = $1 WHERE username = $2';
+                await client.query(updateQuery, [chatId, username]);
+
+                console.log(`Chat ID updated for ${username}: ${chatId}`);
+            } else {
+                console.log(`Failed to fetch chat ID for ${username}`);
+            }
+        }
+
+        client.release();
+    } catch (error) {
+        console.error('Error fetching and saving chat IDs:', error);
+    }
+};
+// Example of calling fetchAndSaveChatIds every day at 2 AM
+cron.schedule('41 15 * * *', async () => {
+    console.log('Fetching and saving chat IDs...');
+    await fetchAndSaveChatIds();
+});
+
 app.get('/getUserData', async (req, res) => {
     try {
         const { username, referralLink } = req.query;
