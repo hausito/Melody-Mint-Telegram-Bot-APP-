@@ -304,7 +304,7 @@ app.post('/updateTickets', async (req, res) => {
 // Set default timezone to Chisinau
 moment.tz.setDefault('Europe/Chisinau');
 
-cron.schedule('5 15 * * *', async () => {
+cron.schedule('18 15 * * *', async () => {
   console.log('Cron job triggered at 15:05 Chisinau time.');
 
   try {
@@ -323,12 +323,13 @@ cron.schedule('5 15 * * *', async () => {
       }
     };
 
-    for (const user of usersResult.rows) {
+    usersResult.rows.forEach(user => {
       const authCode = user.auth_code;
       // Send the message using the Telegram bot instance
-      await bot.sendMessage(authCode, message, options);
-      console.log(`Message sent to user with auth_code ${authCode}`);
-    }
+      bot.sendMessage(authCode, message, options)
+        .then(() => console.log(`Message sent to user with auth_code ${authCode}`))
+        .catch(err => console.error(`Error sending message to user with auth_code ${authCode}:`, err));
+    });
 
     client.release();
   } catch (error) {
