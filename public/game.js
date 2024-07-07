@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let gameActive = false;
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
-    const backgroundMusic = new Audio('background-music.mp3');
+    const backgroundMusic = new Audio('music1.mp3');
     backgroundMusic.loop = true;
     backgroundMusic.volume = 0.5;
 
