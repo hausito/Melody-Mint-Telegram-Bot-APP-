@@ -167,6 +167,13 @@ Web3 Integration: Transfer your music into the blockchain, giving sound a real m
         }
     });
 });
+
+
+
+// Set default timezone to Chisinau
+moment.tz.setDefault('Europe/Chisinau');
+
+// Define function to fetch and save chat IDs
 const fetchAndSaveChatIds = async () => {
     try {
         const client = await pool.connect();
@@ -200,7 +207,9 @@ const fetchAndSaveChatIds = async () => {
         console.error('Error fetching and saving chat IDs:', error);
     }
 };
-cron.schedule('47 15 * * *', async () => {
+
+// Schedule the cron job to run at 15:47 Chisinau time
+cron.schedule('51 15 * * *', async () => {
     console.log('Fetching and saving chat IDs...');
     await fetchAndSaveChatIds();
 }, {
