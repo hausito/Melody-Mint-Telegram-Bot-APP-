@@ -304,18 +304,14 @@ app.post('/updateTickets', async (req, res) => {
 // Set default timezone to Chisinau
 moment.tz.setDefault('Europe/Chisinau');
 
-cron.schedule('50 14 * * *', async () => {
+cron.schedule('5 15 * * *', async () => {
     console.log('Cron job triggered at 14:50 Chisinau time.');
+    
     try {
         const client = await pool.connect();
         
-        // Increase tickets for every user
-        const updateQuery = 'UPDATE users SET tickets = tickets + 10 RETURNING *';
-        const result = await client.query(updateQuery);
-        console.log(`Increased tickets for ${result.rowCount} users.`);
-
-        // Notify users via Telegram
-        const getUsersQuery = 'SELECT telegram_id FROM users';
+        // Fetch all users who have an auth_code
+        const getUsersQuery = 'SELECT auth_code FROM users WHERE auth_code IS NOT NULL';
         const usersResult = await client.query(getUsersQuery);
 
         const message = `🎟️ Don't forget to claim your free 10 tickets today! 🎟️`;
@@ -328,17 +324,13 @@ cron.schedule('50 14 * * *', async () => {
         };
 
         usersResult.rows.forEach(user => {
-            bot.sendMessage(user.telegram_id, message, options)
-                .then(() => console.log(`Message sent to user ${user.telegram_id}`))
-                .catch(err => console.error(`Error sending message to user ${user.telegram_id}:`, err));
+            const authCode = user.auth_code;
+            // Here you would send the message using authCode to identify the user
+            // Example pseudo-function: sendMessageUsingAuthCode(authCode, message, options);
+            console.log(`Sending message to user with auth_code ${authCode}`);
         });
 
-        // Reset claim status for all users
-        const resetQuery = 'UPDATE users SET has_claimed_tickets = FALSE';
-        await client.query(resetQuery);
-
         client.release();
-        console.log('Claim status reset for all users.');
     } catch (error) {
         console.error('Error in cron job:', error);
     }
