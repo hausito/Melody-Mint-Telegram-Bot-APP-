@@ -308,7 +308,7 @@ app.post('/updateTickets', async (req, res) => {
 // Set default timezone to Chisinau
 moment.tz.setDefault('Europe/Chisinau');
 
-cron.schedule('18 15 * * *', async () => {
+cron.schedule('33 15 * * *', async () => {
   console.log('Cron job triggered at 15:05 Chisinau time.');
 
   try {
