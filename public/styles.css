@@ -192,9 +192,16 @@ canvas {
 }
 
 .coin-icon {
-    width: 2rem; /* Adjust size of the coin icon */
-    height: 2rem;
-    margin-right: 0.5rem; /* Adjust margin to reduce space */
+    width: 48px;  /* Adjust size as needed */
+    height: 48px; /* Adjust size as needed */
+}
+
+.absolute.bottom-20 {
+    bottom: 5rem; /* Adjust as needed */
+}
+
+.absolute.right-2 {
+    right: 0.5rem; /* Adjust as needed */
 }
 
 .buttons-container {
