@@ -193,6 +193,12 @@ canvas {
     align-items: center;
     gap: 0.5rem;
 }
+.coin-container img {
+    width: 4vh; /* Original size is 3vh, increasing to 4vh */
+    height: 4vh;
+    transform: scale(1.5); /* Scale up by 1.5 times */
+}
+
 .buttons-container {
     display: flex;
     flex-direction: column;
