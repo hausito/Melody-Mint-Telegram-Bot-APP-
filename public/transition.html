@@ -10,9 +10,8 @@
         body {
             background-color: #000;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             height: 100vh;
             margin: 0;
             font-family: 'Roboto', sans-serif;
@@ -22,29 +21,30 @@
         .score-container {
             text-align: center;
             position: relative;
+            padding: 20px;
+            border: 5px solid #00FFFF;
+            border-radius: 15px;
+            box-shadow: 0 0 20px #00FFFF, 0 0 40px #00FFFF, 0 0 60px #00FFFF;
         }
 
         .score-container h2 {
-            font-size: 24px;
+            font-size: 36px;
             color: #FF007F;
             text-shadow: 0 0 10px #FF007F, 0 0 20px #FF007F, 0 0 30px #FF007F;
+            margin: 10px 0;
         }
 
         .score-value {
-            font-size: 96px;
+            font-size: 120px;
             color: #00FFFF;
             text-shadow: 0 0 10px #00FFFF, 0 0 20px #00FFFF, 0 0 30px #00FFFF, 0 0 40px #00FFFF;
             display: inline-block;
-            border: 5px solid #FFCC00;
-            padding: 20px 40px;
-            border-radius: 20px;
-            box-shadow: 0 0 15px #FFCC00, 0 0 30px #FFCC00, 0 0 45px #FFCC00;
+            margin: 20px 0;
         }
 
         .main-menu-button {
             display: inline-block;
             padding: 15px 30px;
-            margin-top: 30px;
             font-size: 24px;
             color: #000;
             background-color: #FFCC00;
@@ -53,6 +53,7 @@
             cursor: pointer;
             text-decoration: none;
             transition: background-color 0.3s ease;
+            box-shadow: 0 0 10px #FFCC00, 0 0 20px #FFCC00, 0 0 30px #FFCC00;
         }
 
         .main-menu-button:hover {
