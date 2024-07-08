@@ -180,23 +180,19 @@ canvas {
 }
 
 .coin-container {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
     background-color: #13DAAA;
-    padding: 0.5rem 1rem; /* Adjust padding for a more compact layout */
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 9999px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5), inset 0 -2px 4px rgba(0, 0, 0, 0.3);
     display: flex;
     align-items: center;
-    position: absolute;
-    bottom: 0px;
-    justify-content: center;
-    border-radius: 1rem; /* Rounded corners similar to the example */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: add some shadow for depth */
+    gap: 0.5rem;
 }
-
-.coin-icon {
-    width: 2.5rem; /* Adjust size of the coin icon */
-    height: 2.5rem;
-    margin-right: 0.4rem; /* Adjust margin to reduce space */
-}
-
 .buttons-container {
     display: flex;
     flex-direction: column;
