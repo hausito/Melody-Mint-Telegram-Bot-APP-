@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', async () => {
+ document.addEventListener('DOMContentLoaded', async () => {
     // Preload images
     const preloadImages = () => {
         const images = ['home.png', 'tasks.png', 'airdrop.png'];
@@ -230,93 +230,99 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-  function updateScore(newScore) {
-    score = newScore;
-    const scoreElement = document.getElementById('scoreDisplay');
-    scoreElement.textContent = `SCORE: ${score}`;
-    scoreElement.classList.add('neon-score');
+    function handleClick(event) {
+        if (!gameRunning) return;
 
-    // Remove the class after animation completes to allow re-animation
-    setTimeout(() => {
-        scoreElement.classList.remove('neon-score');
-    }, 500); // Match the duration of the heartbeat animation
-}
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const mouseX = (event.clientX - rect.left) * scaleX;
+        const mouseY = (event.clientY - rect.top) * scaleY;
 
-// Call updateScore instead of directly updating the score in the handleClick function
-function handleClick(event) {
-    if (!gameRunning) return;
+        let clickedOnTile = false;
+        tiles.forEach(tile => {
+            if (tile.isClicked(mouseX, mouseY) && !tile.clicked) {
+                tile.startDisappearing();
+                clickedOnTile = true;
+                score++;
+                addNewTile();
+            }
+        });
 
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-    const mouseX = (event.clientX - rect.left) * scaleX;
-    const mouseY = (event.clientY - rect.top) * scaleY;
-
-    let clickedOnTile = false;
-    tiles.forEach(tile => {
-        if (tile.isClicked(mouseX, mouseY) && !tile.clicked) {
-            tile.startDisappearing();
-            clickedOnTile = true;
-            updateScore(score + 1); // Use updateScore to apply the animation
-            addNewTile();
+        if (!clickedOnTile) {
+            gameRunning = false;
+            gameOver();
         }
-    });
-
-    if (!clickedOnTile) {
-        gameRunning = false;
-        gameOver();
     }
-}
+
+    canvas.addEventListener('click', handleClick);
+    canvas.addEventListener('touchstart', (event) => {
+        event.preventDefault();
+        const touch = event.touches[0];
+        handleClick({
+            clientX: touch.clientX,
+            clientY: touch.clientY,
+        });
+    });
 
     let lastTimestamp = 0;
-function gameLoop(timestamp) {
-    if (!gameRunning) return;
 
-    const deltaTime = (timestamp - lastTimestamp) / 1000; 
-    lastTimestamp = timestamp;
+    function gameLoop(timestamp) {
+        if (!gameRunning) return;
 
-    ctx.clearRect(0, 0, WIDTH, HEIGHT);
+        const deltaTime = (timestamp - lastTimestamp) / 1000; 
+        lastTimestamp = timestamp;
 
-    let outOfBounds = false;
-    tiles.forEach(tile => {
-        tile.move(TILE_SPEED * deltaTime * 60); 
-        tile.updateOpacity();
-        if (tile.isOutOfBounds()) {
-            outOfBounds = true;
+        ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+        let outOfBounds = false;
+        tiles.forEach(tile => {
+            tile.move(TILE_SPEED * deltaTime * 60); 
+            tile.updateOpacity();
+            if (tile.isOutOfBounds()) {
+                outOfBounds = true;
+            }
+            tile.draw();
+        });
+
+        if (outOfBounds) {
+            gameRunning = false;
+            gameOver();
+            return;
         }
-        tile.draw();
-    });
 
-    if (outOfBounds) {
-        gameRunning = false;
-        gameOver();
-        return;
+        tiles = tiles.filter(tile => tile.y < HEIGHT && tile.opacity > 0);
+
+        while (tiles.length < 4) {
+            addNewTile();
+        }
+
+        // Draw vertical lines
+        ctx.strokeStyle = '#00ffcc';
+        ctx.lineWidth = 4;
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = '#00ffcc';
+        for (let i = 1; i < COLUMNS; i++) {
+            const x = i * TILE_WIDTH;
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, HEIGHT);
+            ctx.stroke();
+        }
+        ctx.shadowBlur = 0; // Reset shadow
+
+        ctx.fillStyle = SHADOW_COLOR;
+        ctx.font = 'bold 24px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(`SCORE: ${score}`, WIDTH / 2 + 2, 32);
+
+        ctx.fillStyle = SKY_BLUE;
+        ctx.fillText(`SCORE: ${score}`, WIDTH / 2, 30);
+
+        TILE_SPEED += SPEED_INCREMENT * deltaTime * 60;
+
+        requestAnimationFrame(gameLoop);
     }
-
-    tiles = tiles.filter(tile => tile.y < HEIGHT && tile.opacity > 0);
-
-    while (tiles.length < 4) {
-        addNewTile();
-    }
-
-    // Draw vertical lines
-    ctx.strokeStyle = '#00ffcc';
-    ctx.lineWidth = 4;
-    ctx.shadowBlur = 20;
-    ctx.shadowColor = '#00ffcc';
-    for (let i = 1; i < COLUMNS; i++) {
-        const x = i * TILE_WIDTH;
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, HEIGHT);
-        ctx.stroke();
-    }
-    ctx.shadowBlur = 0; // Reset shadow
-
-    TILE_SPEED += SPEED_INCREMENT * deltaTime * 60;
-
-    requestAnimationFrame(gameLoop);
-}
 
     function startMusic() {
         backgroundMusic.play().catch(function(error) {
@@ -378,4 +384,4 @@ function gameLoop(timestamp) {
             console.error('Error saving user:', error);
         }
     }
-});
+});  
