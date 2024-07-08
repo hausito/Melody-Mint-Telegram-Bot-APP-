@@ -6,7 +6,7 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    background-image: url('background.png'); 
+    background-image: url('background.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -15,11 +15,11 @@ body {
 
 /* Disable Copy text */
 body {
-    -webkit-user-select: none; /* Safari */
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* Internet Explorer/Edge */
-    user-select: none; /* Non-prefixed version, currently supported by Chrome, Opera and Edge */
-    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
 }
 
 body.loading #gameContainer {
@@ -135,7 +135,6 @@ canvas {
     align-items: center;
 }
 
-
 .progress-bar {
     position: absolute;
     bottom: 0;
@@ -152,269 +151,141 @@ canvas {
     transform: translateX(-50%);
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
+    width: 120px;
+    z-index: 1001; /* Ensure it's above the progress bar */
 }
 
 .controls img {
-    width: 2.5vh; /* Size for backward and forward buttons */
-    margin: 0 1.8vh; /* Spacing between buttons */
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
 }
 
-.controls img.play {
-    width: 5vh; /* Size for play button */
-}
-
-.icons {
-    width: 3vh;
-    height: 3vh;
-}
-
-#newLayout {
-    width: 80%;
-    max-width: 400px;
-    padding: 20px;
-    background-color: transparent;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
+.controls .play {
+    width: 48px;
+    height: 48px;
 }
 
 .coin-container {
-    background-color: #13DAAA;
-    padding: 0.5rem 1rem; /* Adjust padding for a more compact layout */
-    display: flex;
-    align-items: center;
-    position: absolute;
-    bottom: 0px;
-    justify-content: center;
-    border-radius: 1rem; /* Rounded corners similar to the example */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: add some shadow for depth */
+    background-color: #e0f7ff;
+    border-radius: 8px;
+    padding: 8px;
 }
 
 .coin-icon {
-    width: 48px;  /* Adjust size as needed */
-    height: 48px; /* Adjust size as needed */
+    width: 24px;
+    height: 24px;
 }
 
-.absolute.bottom-20 {
-    bottom: 5rem; /* Adjust as needed */
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 400px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1002;
 }
 
-.absolute.right-2 {
-    right: 0.5rem; /* Adjust as needed */
+.popup-content {
+    padding: 20px;
+    text-align: center;
+}
+
+.popup .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+#footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: white;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.footer-button {
+    flex-grow: 1;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.footer-button img {
+    width: 28px;
+    height: 28px;
+}
+
+.footer-button:hover {
+    background-color: #f0f0f0;
+}
+
+/* Style the buttons inside the start screen */
+.button-custom {
+    width: 100%;
+    padding: 10px 0;
+    margin: 10px 0;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.button-custom:hover {
+    transform: scale(1.05);
 }
 
 .buttons-container {
     display: flex;
     flex-direction: column;
-    gap: 3vh;
-    width: 100%;
-}
-
-.button-custom {
-    width: 100%;
-    -webkit-box-shadow: 12px 10px 16px 12px rgba(0, 0, 0, 0.2) inset;
-    -moz-box-shadow: 12px 10px 16px 12px rgba(0, 0, 0, 0.2) inset;
-    box-shadow: 12px 10px 16px 12px rgba(0, 0, 0, 0.2) inset;
-}
-
-#footer {
-    display: flex;
-    justify-content: space-around;
     align-items: center;
-    padding: 10px 0;
-    position: fixed;
-    bottom: 0;
     width: 100%;
-    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
-    z-index: 1000;
 }
 
-.footer-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;    
-    border: none;
-    padding: 1vh 1vh;
-    cursor: pointer;
-    border-radius: 100%;
-    transition: transform 0.2s ease;
+.shadow-inner-custom-button {
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
-.footer-button img {
-    width: 5vh;
-    height: 5vh;
-    transition: transform 0.2s ease;
-}
-
-.footer-button:hover img {
-    transform: scale(1.2);
-}
-
-.footer-button:focus {
-    outline: none;
-}
-
+/* Style the modal */
 .modal {
     display: none;
     position: fixed;
-    z-index: 2000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.8);
-    justify-content: center;
-    align-items: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    width: 80%;
+    max-width: 500px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .modal-content {
-    background-color: #222; /* Dark background */
     padding: 20px;
-    border-radius: 20px;
     text-align: center;
-    position: relative;
-    max-width: 80%;
-    margin: auto;
 }
 
-.modal-content h2 {
-    color: #fff; /* White text */
-    font-size: 2rem;
-    margin-bottom: 20px;
-}
-
-.modal-content p {
-    color: #ccc; /* Light text */
-    font-size: 1.2rem;
-    margin-bottom: 20px;
-}
-
-.referral-link-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
-}
-
-.referral-link {
-    flex-grow: 1;
-    background-color: #333;
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 5px;
-    word-break: break-all;
-}
-
-.copy-button {
-    background-color: #9A20AA; /* Purple button */
-    color: #fff;
-    font-size: 1.2rem;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.copy-button:hover {
-    background-color: #6b0d70; /* Darker purple on hover */
-}
-
-.modal-content .close {
+.modal .close {
     position: absolute;
     top: 10px;
     right: 10px;
-    color: #ccc;
-    font-size: 1.6rem;
+    font-size: 20px;
     cursor: pointer;
 }
-
-.modal-content .close:hover {
-    color: #fff; /* White on hover */
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-/* Neon glow effect */
-.neon-glow {
-    box-shadow: 0 0 20px #00ffcc, 0 0 30px #00ffcc, 0 0 40px #00ffcc, 0 0 50px #00ffcc;
-}
-
-.popup {
-    display: none; /* Initially hide the popup */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    left: 0;
-    bottom: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    background-color: rgba(0, 0, 0, 0.8); /* Black background with opacity */
-    justify-content: center;
-    align-items: center;
-}
-
-.popup-content {
-    background-color: #222; /* Dark background */
-    padding: 20px;
-    border-radius: 20px;
-    text-align: center;
-    position: relative;
-}
-
-.popup-content h2 {
-    color: #fff; /* White text */
-    font-size: 2rem;
-    margin-bottom: 20px;
-}
-
-.popup-content p {
-    color: #ccc; /* Light text */
-    font-size: 1.2rem;
-    margin-bottom: 30px;
-}
-
-.popup-content button {
-    background-color: #9A20AA; /* Purple button */
-    color: #fff;
-    font-size: 1.2rem;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.popup-content button:hover {
-    background-color: #6b0d70; /* Darker purple on hover */
-}
-
-.popup-content .close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    color: #ccc;
-    font-size: 1.6rem;
-    cursor: pointer;
-}
-
-.popup-content .close:hover {
-    color: #fff; /* White on hover */
-}
-
-
-
