@@ -1,4 +1,4 @@
- document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', async () => {
     // Preload images
     const preloadImages = () => {
         const images = ['home.png', 'tasks.png', 'airdrop.png'];
@@ -15,13 +15,6 @@
     const backgroundMusic = new Audio('music1.mp3');
     backgroundMusic.loop = true;
     backgroundMusic.volume = 0.5;
-  let score = 0;
-let scoreScale = 1; // Current scale of the score text
-const initialScale = 1;
-const targetScale = 1.5; // Scale to zoom out to
-const scaleSpeed = 0.05; // Speed of scaling animation
-let scalingUp = false; // Flag to control the direction of scaling
-
 
     const startScreen = document.getElementById('startScreen');
     const playButton = document.getElementById('playButton');
@@ -41,7 +34,7 @@ let scalingUp = false; // Flag to control the direction of scaling
 
     // Set username or fallback to "Username"
     if (user) {
-        userInfo.textContent = user.username || `${user.first_name} ${user.last_name}`;
+        userInfo.textContent = user.username || ${user.first_name} ${user.last_name};
     } else {
         userInfo.textContent = 'Username';
     }
@@ -52,7 +45,7 @@ let scalingUp = false; // Flag to control the direction of scaling
     // Fetch initial user data (points and tickets)
     const fetchUserData = async () => {
         try {
-            const response = await fetch(`/getUserData?username=${encodeURIComponent(userInfo.textContent)}`);
+            const response = await fetch(/getUserData?username=${encodeURIComponent(userInfo.textContent)});
             const data = await response.json();
             if (data.success) {
                 points = data.points;
@@ -72,7 +65,7 @@ let scalingUp = false; // Flag to control the direction of scaling
     // Update local tickets when claimed in main.js
     document.addEventListener('ticketsUpdated', (event) => {
         tickets = event.detail.tickets;
-        userTickets.textContent = `${tickets}`;
+        userTickets.textContent = ${tickets};
     });
 
     playButton.addEventListener('click', async () => {
@@ -109,7 +102,7 @@ let scalingUp = false; // Flag to control the direction of scaling
         initGame();
         lastTimestamp = performance.now();
         requestAnimationFrame(gameLoop);
-        userTickets.textContent = `${tickets}`;
+        userTickets.textContent = ${tickets};
     });
 
     tasksButton.addEventListener('click', () => {
@@ -236,120 +229,100 @@ let scalingUp = false; // Flag to control the direction of scaling
             }
         }
     }
-  function animateScore() {
-    if (scalingUp) {
-        if (scoreScale < targetScale) {
-            scoreScale += scaleSpeed;
-        } else {
-            scalingUp = false;
-        }
-    } else {
-        if (scoreScale > initialScale) {
-            scoreScale -= scaleSpeed;
+
+    function handleClick(event) {
+        if (!gameRunning) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const mouseX = (event.clientX - rect.left) * scaleX;
+        const mouseY = (event.clientY - rect.top) * scaleY;
+
+        let clickedOnTile = false;
+        tiles.forEach(tile => {
+            if (tile.isClicked(mouseX, mouseY) && !tile.clicked) {
+                tile.startDisappearing();
+                clickedOnTile = true;
+                score++;
+                addNewTile();
+            }
+        });
+
+        if (!clickedOnTile) {
+            gameRunning = false;
+            gameOver();
         }
     }
-}
 
-function increaseScore() {
-    score++;
-    scalingUp = true;
-    scoreScale = initialScale; // Reset the scale for a new animation
-}
-
-function handleClick(event) {
-    if (!gameRunning) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-    const mouseX = (event.clientX - rect.left) * scaleX;
-    const mouseY = (event.clientY - rect.top) * scaleY;
-
-    let clickedOnTile = false;
-    tiles.forEach(tile => {
-        if (tile.isClicked(mouseX, mouseY) && !tile.clicked) {
-            tile.startDisappearing();
-            clickedOnTile = true;
-            increaseScore(); // Increase score with animation
-            addNewTile();
-        }
+    canvas.addEventListener('click', handleClick);
+    canvas.addEventListener('touchstart', (event) => {
+        event.preventDefault();
+        const touch = event.touches[0];
+        handleClick({
+            clientX: touch.clientX,
+            clientY: touch.clientY,
+        });
     });
-
-    if (!clickedOnTile) {
-        gameRunning = false;
-        gameOver();
-    }
-}
-
 
     let lastTimestamp = 0;
 
-    function drawScore() {
-    ctx.save();
-    ctx.translate(WIDTH / 2, 30); // Move the origin to the center of the score text
-    ctx.scale(scoreScale, scoreScale); // Apply the current scale
-    ctx.fillStyle = SHADOW_COLOR;
-    ctx.font = 'bold 24px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText(`SCORE: ${score}`, 0 + 2, 0 + 2); // Draw shadow text
-    ctx.fillStyle = SKY_BLUE;
-    ctx.fillText(`SCORE: ${score}`, 0, 0); // Draw main text
-    ctx.restore();
-}
+    function gameLoop(timestamp) {
+        if (!gameRunning) return;
 
-function gameLoop(timestamp) {
-    if (!gameRunning) return;
+        const deltaTime = (timestamp - lastTimestamp) / 1000; 
+        lastTimestamp = timestamp;
 
-    const deltaTime = (timestamp - lastTimestamp) / 1000; 
-    lastTimestamp = timestamp;
+        ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
-    ctx.clearRect(0, 0, WIDTH, HEIGHT);
+        let outOfBounds = false;
+        tiles.forEach(tile => {
+            tile.move(TILE_SPEED * deltaTime * 60); 
+            tile.updateOpacity();
+            if (tile.isOutOfBounds()) {
+                outOfBounds = true;
+            }
+            tile.draw();
+        });
 
-    let outOfBounds = false;
-    tiles.forEach(tile => {
-        tile.move(TILE_SPEED * deltaTime * 60); 
-        tile.updateOpacity();
-        if (tile.isOutOfBounds()) {
-            outOfBounds = true;
+        if (outOfBounds) {
+            gameRunning = false;
+            gameOver();
+            return;
         }
-        tile.draw();
-    });
 
-    if (outOfBounds) {
-        gameRunning = false;
-        gameOver();
-        return;
+        tiles = tiles.filter(tile => tile.y < HEIGHT && tile.opacity > 0);
+
+        while (tiles.length < 4) {
+            addNewTile();
+        }
+
+        // Draw vertical lines
+        ctx.strokeStyle = '#00ffcc';
+        ctx.lineWidth = 4;
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = '#00ffcc';
+        for (let i = 1; i < COLUMNS; i++) {
+            const x = i * TILE_WIDTH;
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, HEIGHT);
+            ctx.stroke();
+        }
+        ctx.shadowBlur = 0; // Reset shadow
+
+        ctx.fillStyle = SHADOW_COLOR;
+        ctx.font = 'bold 24px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(SCORE: ${score}, WIDTH / 2 + 2, 32);
+
+        ctx.fillStyle = SKY_BLUE;
+        ctx.fillText(SCORE: ${score}, WIDTH / 2, 30);
+
+        TILE_SPEED += SPEED_INCREMENT * deltaTime * 60;
+
+        requestAnimationFrame(gameLoop);
     }
-
-    tiles = tiles.filter(tile => tile.y < HEIGHT && tile.opacity > 0);
-
-    while (tiles.length < 4) {
-        addNewTile();
-    }
-
-    // Draw vertical lines
-    ctx.strokeStyle = '#00ffcc';
-    ctx.lineWidth = 4;
-    ctx.shadowBlur = 20;
-    ctx.shadowColor = '#00ffcc';
-    for (let i = 1; i < COLUMNS; i++) {
-        const x = i * TILE_WIDTH;
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, HEIGHT);
-        ctx.stroke();
-    }
-    ctx.shadowBlur = 0; // Reset shadow
-
-    // Animate and draw the score
-    animateScore();
-    drawScore();
-
-    TILE_SPEED += SPEED_INCREMENT * deltaTime * 60;
-
-    requestAnimationFrame(gameLoop);
-}
-
 
     function startMusic() {
         backgroundMusic.play().catch(function(error) {
@@ -372,7 +345,7 @@ function gameLoop(timestamp) {
             }
         }
         if (tg.initDataUnsafe?.user) {
-            userInfo.textContent = tg.initDataUnsafe.user.username || `${tg.initDataUnsafe.user.first_name} ${tg.initDataUnsafe.user.last_name}`;
+            userInfo.textContent = tg.initDataUnsafe.user.username || ${tg.initDataUnsafe.user.first_name} ${tg.initDataUnsafe.user.last_name};
         } else {
             userInfo.textContent = 'Username';
         }
@@ -386,7 +359,7 @@ function gameLoop(timestamp) {
 
         gameActive = false;
         await saveUser(userInfo.textContent, score);
-        const redirectURL = `transition.html?score=${score}`;
+        const redirectURL = transition.html?score=${score};
         window.location.replace(redirectURL);
     }
 
@@ -411,4 +384,4 @@ function gameLoop(timestamp) {
             console.error('Error saving user:', error);
         }
     }
-});  
+});   
