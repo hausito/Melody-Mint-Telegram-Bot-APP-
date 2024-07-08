@@ -27,7 +27,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const header = document.getElementById('header');
     const loadingheader = document.getElementById('loadingScreen');
 
-
     // Initialize Telegram Web Apps API
     const tg = window.Telegram.WebApp;
     const user = tg.initDataUnsafe?.user;
@@ -133,6 +132,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     let tiles = [];
     let score = 0;
     let gameRunning = true;
+
+    // Variables for score animation
+    let scoreAnimationTime = 0;
+    const SCORE_ANIMATION_DURATION = 0.5; // 0.5 seconds
 
     class Tile {
         constructor(x, y) {
@@ -245,6 +248,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 tile.startDisappearing();
                 clickedOnTile = true;
                 score++;
+                scoreAnimationTime = SCORE_ANIMATION_DURATION; // Reset animation time
                 addNewTile();
             }
         });
@@ -311,13 +315,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         ctx.shadowBlur = 0; // Reset shadow
 
+        // Draw score with animation
+        let scale = 1;
+        if (scoreAnimationTime > 0) {
+            const progress = 1 - (scoreAnimationTime / SCORE_ANIMATION_DURATION);
+            scale = 1 + 0.5 * Math.sin(progress * Math.PI); // Scale with a smooth sinusoidal function
+            scoreAnimationTime -= deltaTime;
+        }
+
+        ctx.save();
+        ctx.translate(WIDTH / 2, 30); // Move origin to the score position
+        ctx.scale(scale, scale); // Apply scaling
         ctx.fillStyle = SHADOW_COLOR;
         ctx.font = 'bold 24px Arial';
         ctx.textAlign = 'center';
-        ctx.fillText(`SCORE: ${score}`, WIDTH / 2 + 2, 32);
-
+        ctx.fillText(`SCORE: ${score}`, 2, 2);
         ctx.fillStyle = SKY_BLUE;
-        ctx.fillText(`SCORE: ${score}`, WIDTH / 2, 30);
+        ctx.fillText(`SCORE: ${score}`, 0, 0);
+        ctx.restore();
 
         TILE_SPEED += SPEED_INCREMENT * deltaTime * 60;
 
