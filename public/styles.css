@@ -14,7 +14,7 @@ body {
 }
 #userInfo {
     position: absolute;
-    top: 0.2rem; /* Adjust this value to move the element higher */
+    top: 0.4rem; /* Adjust this value to move the element higher */
     left: 50%;
     transform: translateX(-50%);
     color: white;
