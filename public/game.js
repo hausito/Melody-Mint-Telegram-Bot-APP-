@@ -33,7 +33,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Set username or fallback to "Username"
     if (user) {
-        userInfo.textContent = user.username || `${user.first_name} ${user.last_name}`;
+        userInfo.textContent = user.username ? `@${user.username}` : `${user.first_name} ${user.last_name}`;
+
     } else {
         userInfo.textContent = 'Username';
     }
