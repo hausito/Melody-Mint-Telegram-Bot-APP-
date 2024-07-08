@@ -110,8 +110,7 @@ bot.on('message', async (msg) => {
 
         if (existingUser.rows.length === 0) {
             // User does not exist, insert new user
-            const referralLink = ''; // No referral link on initial bot start
-            const newUser = await insertUserAndReferral(username, referralLink);
+            const newUser = await insertUserAndReferral(username);
 
             // Update the chat ID for the new user
             await client.query('UPDATE users SET chat_id = $1 WHERE username = $2', [chatId, username]);
@@ -130,6 +129,7 @@ bot.on('message', async (msg) => {
         console.error('Error saving user on bot start or message event:', error);
     }
 });
+
 
 bot.on('message', (msg) => {
     const chatId = msg.chat.id;
