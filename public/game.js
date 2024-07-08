@@ -15,6 +15,13 @@
     const backgroundMusic = new Audio('music1.mp3');
     backgroundMusic.loop = true;
     backgroundMusic.volume = 0.5;
+  let score = 0;
+let scoreScale = 1; // Current scale of the score text
+const initialScale = 1;
+const targetScale = 1.5; // Scale to zoom out to
+const scaleSpeed = 0.05; // Speed of scaling animation
+let scalingUp = false; // Flag to control the direction of scaling
+
 
     const startScreen = document.getElementById('startScreen');
     const playButton = document.getElementById('playButton');
@@ -229,100 +236,120 @@
             }
         }
     }
-
-    function handleClick(event) {
-        if (!gameRunning) return;
-
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
-        const mouseX = (event.clientX - rect.left) * scaleX;
-        const mouseY = (event.clientY - rect.top) * scaleY;
-
-        let clickedOnTile = false;
-        tiles.forEach(tile => {
-            if (tile.isClicked(mouseX, mouseY) && !tile.clicked) {
-                tile.startDisappearing();
-                clickedOnTile = true;
-                score++;
-                addNewTile();
-            }
-        });
-
-        if (!clickedOnTile) {
-            gameRunning = false;
-            gameOver();
+  function animateScore() {
+    if (scalingUp) {
+        if (scoreScale < targetScale) {
+            scoreScale += scaleSpeed;
+        } else {
+            scalingUp = false;
+        }
+    } else {
+        if (scoreScale > initialScale) {
+            scoreScale -= scaleSpeed;
         }
     }
+}
 
-    canvas.addEventListener('click', handleClick);
-    canvas.addEventListener('touchstart', (event) => {
-        event.preventDefault();
-        const touch = event.touches[0];
-        handleClick({
-            clientX: touch.clientX,
-            clientY: touch.clientY,
-        });
+function increaseScore() {
+    score++;
+    scalingUp = true;
+    scoreScale = initialScale; // Reset the scale for a new animation
+}
+
+function handleClick(event) {
+    if (!gameRunning) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const mouseX = (event.clientX - rect.left) * scaleX;
+    const mouseY = (event.clientY - rect.top) * scaleY;
+
+    let clickedOnTile = false;
+    tiles.forEach(tile => {
+        if (tile.isClicked(mouseX, mouseY) && !tile.clicked) {
+            tile.startDisappearing();
+            clickedOnTile = true;
+            increaseScore(); // Increase score with animation
+            addNewTile();
+        }
     });
+
+    if (!clickedOnTile) {
+        gameRunning = false;
+        gameOver();
+    }
+}
+
 
     let lastTimestamp = 0;
 
-    function gameLoop(timestamp) {
-        if (!gameRunning) return;
+    function drawScore() {
+    ctx.save();
+    ctx.translate(WIDTH / 2, 30); // Move the origin to the center of the score text
+    ctx.scale(scoreScale, scoreScale); // Apply the current scale
+    ctx.fillStyle = SHADOW_COLOR;
+    ctx.font = 'bold 24px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(`SCORE: ${score}`, 0 + 2, 0 + 2); // Draw shadow text
+    ctx.fillStyle = SKY_BLUE;
+    ctx.fillText(`SCORE: ${score}`, 0, 0); // Draw main text
+    ctx.restore();
+}
 
-        const deltaTime = (timestamp - lastTimestamp) / 1000; 
-        lastTimestamp = timestamp;
+function gameLoop(timestamp) {
+    if (!gameRunning) return;
 
-        ctx.clearRect(0, 0, WIDTH, HEIGHT);
+    const deltaTime = (timestamp - lastTimestamp) / 1000; 
+    lastTimestamp = timestamp;
 
-        let outOfBounds = false;
-        tiles.forEach(tile => {
-            tile.move(TILE_SPEED * deltaTime * 60); 
-            tile.updateOpacity();
-            if (tile.isOutOfBounds()) {
-                outOfBounds = true;
-            }
-            tile.draw();
-        });
+    ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
-        if (outOfBounds) {
-            gameRunning = false;
-            gameOver();
-            return;
+    let outOfBounds = false;
+    tiles.forEach(tile => {
+        tile.move(TILE_SPEED * deltaTime * 60); 
+        tile.updateOpacity();
+        if (tile.isOutOfBounds()) {
+            outOfBounds = true;
         }
+        tile.draw();
+    });
 
-        tiles = tiles.filter(tile => tile.y < HEIGHT && tile.opacity > 0);
-
-        while (tiles.length < 4) {
-            addNewTile();
-        }
-
-        // Draw vertical lines
-        ctx.strokeStyle = '#00ffcc';
-        ctx.lineWidth = 4;
-        ctx.shadowBlur = 20;
-        ctx.shadowColor = '#00ffcc';
-        for (let i = 1; i < COLUMNS; i++) {
-            const x = i * TILE_WIDTH;
-            ctx.beginPath();
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x, HEIGHT);
-            ctx.stroke();
-        }
-        ctx.shadowBlur = 0; // Reset shadow
-
-        ctx.fillStyle = SHADOW_COLOR;
-        ctx.font = 'bold 24px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText(`SCORE: ${score}`, WIDTH / 2 + 2, 32);
-
-        ctx.fillStyle = SKY_BLUE;
-        ctx.fillText(`SCORE: ${score}`, WIDTH / 2, 30);
-
-        TILE_SPEED += SPEED_INCREMENT * deltaTime * 60;
-
-        requestAnimationFrame(gameLoop);
+    if (outOfBounds) {
+        gameRunning = false;
+        gameOver();
+        return;
     }
+
+    tiles = tiles.filter(tile => tile.y < HEIGHT && tile.opacity > 0);
+
+    while (tiles.length < 4) {
+        addNewTile();
+    }
+
+    // Draw vertical lines
+    ctx.strokeStyle = '#00ffcc';
+    ctx.lineWidth = 4;
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = '#00ffcc';
+    for (let i = 1; i < COLUMNS; i++) {
+        const x = i * TILE_WIDTH;
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, HEIGHT);
+        ctx.stroke();
+    }
+    ctx.shadowBlur = 0; // Reset shadow
+
+    // Animate and draw the score
+    animateScore();
+    drawScore();
+
+    TILE_SPEED += SPEED_INCREMENT * deltaTime * 60;
+
+    requestAnimationFrame(gameLoop);
+}
+
 
     function startMusic() {
         backgroundMusic.play().catch(function(error) {
