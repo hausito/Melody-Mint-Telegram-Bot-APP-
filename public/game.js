@@ -274,14 +274,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     function gameLoop(timestamp) {
         if (!gameRunning) return;
 
-        const deltaTime = (timestamp - lastTimestamp) / 1000; 
+        const deltaTime = (timestamp - lastTimestamp) / 1000;
         lastTimestamp = timestamp;
 
         ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
         let outOfBounds = false;
         tiles.forEach(tile => {
-            tile.move(TILE_SPEED * deltaTime * 60); 
+            tile.move(TILE_SPEED * deltaTime * 60);
             tile.updateOpacity();
             if (tile.isOutOfBounds()) {
                 outOfBounds = true;
@@ -315,7 +315,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         ctx.shadowBlur = 0; // Reset shadow
 
-        // Draw score with animation
+        // Draw score with neon glow effect
         let scale = 1;
         if (scoreAnimationTime > 0) {
             const progress = 1 - (scoreAnimationTime / SCORE_ANIMATION_DURATION);
@@ -323,15 +323,33 @@ document.addEventListener('DOMContentLoaded', async () => {
             scoreAnimationTime -= deltaTime;
         }
 
+        const drawNeonText = (text, x, y, color, blur) => {
+            ctx.fillStyle = color;
+            ctx.shadowColor = color;
+            ctx.shadowBlur = blur;
+            ctx.fillText(text, x, y);
+            ctx.shadowBlur = 0; // Reset shadow
+        };
+
+        const scoreText = `SCORE: ${score}`;
+        const scoreX = WIDTH / 2;
+        const scoreY = 30;
+
         ctx.save();
-        ctx.translate(WIDTH / 2, 30); // Move origin to the score position
+        ctx.translate(scoreX, scoreY); // Move origin to the score position
         ctx.scale(scale, scale); // Apply scaling
-        ctx.fillStyle = SHADOW_COLOR;
         ctx.font = 'bold 24px Arial';
         ctx.textAlign = 'center';
-        ctx.fillText(`SCORE: ${score}`, 2, 2);
-        ctx.fillStyle = SKY_BLUE;
-        ctx.fillText(`SCORE: ${score}`, 0, 0);
+
+        // Neon glow layers
+        drawNeonText(scoreText, 0, 0, '#FF6F61', 20); // Outer glow
+        drawNeonText(scoreText, 0, 0, '#FF6F61', 10); // Middle glow
+        drawNeonText(scoreText, 0, 0, '#87CEEB', 5);  // Inner glow
+
+        // Main text
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillText(scoreText, 0, 0);
+
         ctx.restore();
 
         TILE_SPEED += SPEED_INCREMENT * deltaTime * 60;
