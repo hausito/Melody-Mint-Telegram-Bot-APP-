@@ -100,6 +100,7 @@ const insertUserAndReferral = async (username) => {
 };
 
 
+// On bot start or message event, save user information
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
     const username = msg.from.username;
@@ -110,17 +111,14 @@ bot.on('message', async (msg) => {
 
         if (existingUser.rows.length === 0) {
             // User does not exist, insert new user
-            const newUser = await insertUserAndReferral(username);
-
-            // Update the chat ID for the new user
-            await client.query('UPDATE users SET chat_id = $1 WHERE username = $2', [chatId, username]);
+            const referralLink = ''; // No referral link on initial bot start
+            await insertUserAndReferral(username, referralLink);
             console.log(`New user saved: ${username} (Telegram ID: ${chatId})`);
         } else {
             // User exists, update their Telegram ID if not already set
-            const existingChatId = existingUser.rows[0].chat_id;
-            if (!existingChatId) {
-                await client.query('UPDATE users SET chat_id = $1 WHERE username = $2', [chatId, username]);
-                console.log(`Updated chat ID for user: ${username} (Telegram ID: ${chatId})`);
+            const existingTelegramId = existingUser.rows[0].telegram_id;
+            if (!existingTelegramId) {
+                await client.query('UPDATE users SET telegram_id = $1 WHERE username = $2', [chatId, username]);
             }
         }
 
@@ -129,8 +127,6 @@ bot.on('message', async (msg) => {
         console.error('Error saving user on bot start or message event:', error);
     }
 });
-
-
 bot.on('message', (msg) => {
     const chatId = msg.chat.id;
     const username = msg.from.username;
@@ -167,10 +163,6 @@ Web3 Integration: Transfer your music into the blockchain, giving sound a real m
         }
     });
 });
-
-
-
-
 app.get('/getUserData', async (req, res) => {
     try {
         const { username, referralLink } = req.query;
@@ -309,43 +301,44 @@ app.post('/updateTickets', async (req, res) => {
     }
 });
 
-// Set default timezone to Chisinau
-moment.tz.setDefault('Europe/Chisinau');
+cron.schedule('26 14 * * *', async () => {
+    try {
+        const client = await pool.connect();
 
-cron.schedule('33 15 * * *', async () => {
-  console.log('Cron job triggered at 15:05 Chisinau time.');
+        // Send message to all users
+        const getUsersQuery = 'SELECT telegram_id FROM users';
+        const result = await client.query(getUsersQuery);
+        const userIds = result.rows.map(row => row.telegram_id);
 
-  try {
-    const client = await pool.connect();
-    
-    // Fetch all users who have a chat ID
-    const getUsersQuery = 'SELECT chat_id FROM users WHERE chat_id IS NOT NULL';
-    const usersResult = await client.query(getUsersQuery);
+        const message = `🎟️ Don't forget to claim your free 10 tickets today! 🎟️`;
 
-    const message = `🎟️ Don't forget to claim your free 10 tickets today! 🎟️`;
-    const options = {
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: 'Claim Now', url: 'https://t.me/melodymint_bot/melodymint' }]
-        ]
-      }
-    };
+        const options = {
+            reply_markup: {
+                inline_keyboard: [
+                    [{ text: 'Claim Now', url: 'https://t.me/melodymint_bot/melodymint' }]
+                ]
+            }
+        };
 
-    usersResult.rows.forEach(user => {
-      const chatId = user.chat_id;
-      // Send the message using the Telegram bot instance
-      bot.sendMessage(chatId, message, options)
-        .then(() => console.log(`Message sent to user with chat ID ${chatId}`))
-        .catch(err => console.error(`Error sending message to user with chat ID ${chatId}:`, err));
-    });
+        userIds.forEach(userId => {
+            bot.sendMessage(userId, message, options)
+                .then(() => console.log(`Message sent to user ${userId}`))
+                .catch(err => console.error(`Error sending message to user ${userId}:`, err));
+        });
 
-    client.release();
-  } catch (error) {
-    console.error('Error in cron job:', error);
-  }
+        // Reset claim status for all users
+        const resetQuery = 'UPDATE users SET has_claimed_tickets = FALSE';
+        await client.query(resetQuery);
+
+        client.release();
+        console.log('Claim status reset for all users at 4:20 PM Chisinau time');
+    } catch (err) {
+        console.error('Error resetting claim status:', err);
+    }
 }, {
-  timezone: 'Europe/Chisinau'
+    timezone: 'Europe/Chisinau' // Set the timezone to Chisinau
 });
+
 
 
 
@@ -445,6 +438,8 @@ bot.onText(/\/start (.+)/, async (msg, match) => {
         bot.sendMessage(chatId, 'An error occurred while processing your request. Please try again later.');
     }
 });
+
+
 
 
 
