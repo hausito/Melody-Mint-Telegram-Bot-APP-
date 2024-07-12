@@ -55,7 +55,6 @@ const generateTelegramId = () => {
     return crypto.randomBytes(8).toString('hex');
 };
 
-// Insert user and referral function
 const insertUserAndReferral = async (username, chatId) => {
     const client = await pool.connect();
     try {
@@ -73,7 +72,7 @@ const insertUserAndReferral = async (username, chatId) => {
 
         // User does not exist, proceed with insertion
         const insertQuery = `
-            INSERT INTO users (username, points, tickets, referral_link, friends_invited, telegram_id)
+            INSERT INTO users (username, points, tickets, referral_link, friends_invited, chat_id)
             VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING user_id, points, tickets
         `;
@@ -99,8 +98,6 @@ const insertUserAndReferral = async (username, chatId) => {
     }
 };
 
-
-
 // On bot start or message event, save user information
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
@@ -112,14 +109,13 @@ bot.on('message', async (msg) => {
 
         if (existingUser.rows.length === 0) {
             // User does not exist, insert new user
-            const referralLink = ''; // No referral link on initial bot start
-            await insertUserAndReferral(username, referralLink);
+            await insertUserAndReferral(username, chatId);
             console.log(`New user saved: ${username} (Telegram ID: ${chatId})`);
         } else {
-            // User exists, update their Telegram ID if not already set
-            const existingTelegramId = existingUser.rows[0].chat_id;
-            if (!existingTelegramId) {
-                await client.query('UPDATE users SET telegram_id = $1 WHERE username = $2', [chatId, username]);
+            // User exists, update their chat_id if not already set
+            const existingChatId = existingUser.rows[0].chat_id;
+            if (!existingChatId) {
+                await client.query('UPDATE users SET chat_id = $1 WHERE username = $2', [chatId, username]);
             }
         }
 
@@ -128,6 +124,7 @@ bot.on('message', async (msg) => {
         console.error('Error saving user on bot start or message event:', error);
     }
 });
+
 bot.on('message', (msg) => {
     const chatId = msg.chat.id;
     const username = msg.from.username;
@@ -164,6 +161,7 @@ Web3 Integration: Transfer your music into the blockchain, giving sound a real m
         }
     });
 });
+
 app.get('/getUserData', async (req, res) => {
     try {
         const { username, referralLink } = req.query;
