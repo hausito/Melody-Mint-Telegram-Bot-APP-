@@ -117,7 +117,7 @@ bot.on('message', async (msg) => {
             console.log(`New user saved: ${username} (Telegram ID: ${chatId})`);
         } else {
             // User exists, update their Telegram ID if not already set
-            const existingTelegramId = existingUser.rows[0].telegram_id;
+            const existingTelegramId = existingUser.rows[0].chat_id;
             if (!existingTelegramId) {
                 await client.query('UPDATE users SET telegram_id = $1 WHERE username = $2', [chatId, username]);
             }
