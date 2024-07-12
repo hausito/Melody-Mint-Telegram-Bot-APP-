@@ -301,14 +301,14 @@ app.post('/updateTickets', async (req, res) => {
     }
 });
 
-cron.schedule('01 16 * * *', async () => {
+cron.schedule('26 14 * * *', async () => {
     try {
         const client = await pool.connect();
 
         // Send message to all users
-        const getUsersQuery = 'SELECT chat_id FROM users';
+        const getUsersQuery = 'SELECT telegram_id FROM users';
         const result = await client.query(getUsersQuery);
-        const userIds = result.rows.map(row => row.chat_id);
+        const userIds = result.rows.map(row => row.telegram_id);
 
         const message = `🎟️ Don't forget to claim your free 10 tickets today! 🎟️`;
 
