@@ -56,7 +56,7 @@ const generateTelegramId = () => {
 };
 
 // Insert user and referral function
-const insertUserAndReferral = async (username) => {
+const insertUserAndReferral = async (username, chatId) => {
     const client = await pool.connect();
     try {
         await client.query('BEGIN');
@@ -73,11 +73,11 @@ const insertUserAndReferral = async (username) => {
 
         // User does not exist, proceed with insertion
         const insertQuery = `
-            INSERT INTO users (username, points, tickets, referral_link, friends_invited)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO users (username, points, tickets, referral_link, friends_invited, telegram_id)
+            VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING user_id, points, tickets
         `;
-        const insertValues = [username, 0, 100, '', 0]; // No referralLink needed initially
+        const insertValues = [username, 0, 100, '', 0, chatId]; // No referralLink needed initially
         const insertResult = await client.query(insertQuery, insertValues);
 
         const userId = insertResult.rows[0].user_id;
@@ -98,6 +98,7 @@ const insertUserAndReferral = async (username) => {
         client.release();
     }
 };
+
 
 
 // On bot start or message event, save user information
